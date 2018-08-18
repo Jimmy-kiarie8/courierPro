@@ -98,6 +98,7 @@
                                 <th scope="col">Events</th>
                                 <th scope="col">Event date and time</th>
                                 <th scope="col">Location</th>
+                                <th scope="col">Remark</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -105,6 +106,7 @@
                                 <th scope="row">1</th>
                                 <td>{{ statuses.status }}</td>
                                 <td>{{ statuses.created_at }}</td>
+                                <td>{{ statuses.location }}</td>
                                 <td>{{ statuses.remark }}</td>
                             </tr>
                         </tbody>

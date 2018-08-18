@@ -61,9 +61,11 @@ let mysubsicriber = require('./components/emails/Subscribe.vue');
 let myInvice = require('./components/invoices/Invoice.vue');
 let myReceipt = require('./components/receipt/Receipt.vue');
 let myReports = require('./components/reports/Reports.vue');
-let myCsv = require('./components/csv/Csv.vue');
+// let myCsv = require('./components/csv/Csv.vue');
+let myCsv = require('./components/csv/test.vue');
 let mybranchShip = require('./components/branches/BranchShipments.vue');
 let myRoles = require('./components/users/roles/Roles.vue');
+let myscheduled = require('./components/shipments/Scheduled.vue');
 
 const routes = [
 {path: '/', component: dashboard },
@@ -83,6 +85,7 @@ const routes = [
 {path: '/csv', component: myCsv },
 {path: '/roles', component: myRoles },
 {path: '/branch/:id', component: mybranchShip },
+{path: '/scheduled', component: myscheduled },
 ]
 const router = new VueRouter({
 // mode: 'history',
@@ -95,7 +98,7 @@ const app = new Vue({
     components: {
     	myHeader, myUser, myDrivers, myShipment, myScanner, myContainer, myMap,
         myBranch, myProfile, myCompany, myCustomer, mysubsicriber, myInvice, myReceipt,
-        myReports, myCsv, mybranchShip, myRoles
+        myReports, myCsv, mybranchShip, myRoles, myscheduled
     },
     data: {
     shipments: [],

@@ -115,7 +115,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::post('pendingExpo', 'ReportController@pendingExpo')->name('pendingExpo');
 	Route::post('bookingExpo', 'ReportController@bookingExpo')->name('bookingExpo');
 	Route::post('approvedExpo', 'ReportController@approvedExpo')->name('approvedExpo');
-
+	Route::post('dispatchedExpo', 'ReportController@dispatchedExpo')->name('dispatchedExpo');
 	Route::post('userDateExpo', 'ReportController@userDateExpo')->name('userDateExpo');
 
 
@@ -124,6 +124,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::post('approvedShipment', 'ShipmentController@approvedShipment')->name('approvedShipment');
 	Route::post('waitingShipment', 'ShipmentController@waitingShipment')->name('waitingShipment');
 	Route::post('deriveredShipment', 'ShipmentController@deriveredShipment')->name('deriveredShipment');
+	Route::get('scheduled', 'ShipmentController@scheduled')->name('scheduled');
 
 	// Chart
 	Route::post('getChartData', 'ShipmentController@getChartData')->name('getChartData');
@@ -156,4 +157,13 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::delete('/attachments/', 'HomeController@deleteAttachment')->name('delete-attachment');
 	Route::post('/attachments/categories', 'HomeController@getCategories')->name('pull-categories');
 	Route::post('/categories', 'HomeController@storeCategories');
+
+
+	// Date test
+	Route::post('/carbon', 'RoleController@carbon')->name('carbon');
+
+
+	// Reports
+	Route::get('/displayReport', 'ReportController@displayReport')->name('displayReport');
+	
 });

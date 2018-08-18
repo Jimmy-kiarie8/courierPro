@@ -7,6 +7,12 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use PdfReport;
+use ExcelReport;
+use Illuminate\Support\Carbon;
+
+use App\Mail\ReportMail;
+
 
 class ReportController extends Controller {
 	public function index() {
@@ -110,7 +116,7 @@ class ReportController extends Controller {
 
 			$excel->sheet('Sheetname', function ($sheet) {
 
-				$sheet->fromModel(Shipment::where('status', 'derivered')->get());
+				$sheet->fromModel(Shipment::where('status', 'Derivered')->get());
 
 			});
 
@@ -139,7 +145,22 @@ class ReportController extends Controller {
 			echo 'Failed';
 		}
 	}
-	public function branchesExpo() {
+	public function dispatchedExpo() {
+		$results = Excel::create('Users', function ($excel) {
+
+			$excel->sheet('Sheetname', function ($sheet) {
+
+				$sheet->fromModel(Shipment::where('status', 'Dispatched')->get());
+
+			});
+
+		})->export('xls');
+
+		if ($results) {
+			echo "success";
+		} else {
+			echo 'Failed';
+		}
 
 	}
 	public function agentsExpo() {
@@ -185,4 +206,88 @@ class ReportController extends Controller {
 				echo 'Failed';
 		*/
 	}
+
+	// PdfReport Aliases
+
+public function displayReport(Request $request) {
+	$all_shipment = Shipment::setEagerLoads([])->get();
+	$today = Carbon::now();
+	 $user = User::find(1);
+	// foreach ($all_shipment as $shipment) {
+	// 	$derivery_date = new Carbon($shipment->derivery_date);
+	// 	$date1 = Carbon::today();
+	// 	$date2 = new Carbon('tomorrow');
+	// 	$date2->diffInDays($date1);
+	// 	$shipment = Shipment::whereBetween('created_at', [$date1, $date2])->setEagerLoads([])->get();
+	// }
+
+
+
+	
+	$fromDate = Carbon::today();
+	$next_month = $today->addMonth();
+
+	$toDate = '2018-08-17';
+	$sortBy = 'id';
+
+	// Report title
+	$title = 'Registered User Report';
+
+	// For displaying filters description on header
+	$meta = [
+		'Report From' => $fromDate . ' To ' . $toDate,
+		'Sort By' => $sortBy
+	];
+	
+
+	$users = User::with('roles')->get();
+	$userArr = [];
+	foreach ($users as $user) {
+		foreach ($user->roles as $role) {
+			if ($role->name == 'Customer') {
+				$userArr[] = $role->pivot->user_id;		
+			}
+		}
+	}
+	$customers = User::whereIn('id', $userArr)->get();
+	$cust_emails = $customers->map(function ($customer) {
+		return $customer->only('email', 'name');
+	});
+
+	foreach ($cust_emails as $mails) {
+	$email = $mails['email'];
+		
+	// Do some querying..
+	$queryBuilder = Shipment::whereBetween('created_at', ['2018-08-01' ,$next_month])
+						->where('client_name', $mails['name'])
+						->orderBy($sortBy);
+	$columns = [
+		'airway bill no',
+		'sender name',
+		'sender email',
+		'sender city',
+		'sender phone',
+		'client name',
+		'client email',
+		'client city',
+		'client phone',
+		'amount ordered',
+		'derivery date',
+	];
+	
+	$pdf = PdfReport::of($title, $meta, $queryBuilder, $columns)
+					->editColumn('created at', [
+						'displayAs' => function($result) {
+							return $result->created_at->format('d M Y');
+						}
+					])
+					->setCss([
+						'.head-content' => 'border-width: 1px',
+					 ])
+					->limit(10)
+					->stream(); // or download('f
+					return $pdf;
+
+	}	
+}
 }

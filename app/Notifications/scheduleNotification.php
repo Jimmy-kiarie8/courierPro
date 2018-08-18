@@ -6,19 +6,23 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use App\User;
 
 class scheduleNotification extends Notification
 {
     use Queueable;
+    
+    public $shipments, $user;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(User $user, $shipments)
     {
-        //
+        $this->shipments =  $shipments;
+        $this->user = $user;
     }
 
     /**
@@ -40,10 +44,7 @@ class scheduleNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        return (new MailMessage)->markdown('mail.scheduleNotification');
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ShipmentRequest;
 use App\Shipment;
+use Illuminate\Support\Carbon;
 use App\ShipmentStatus;
 use App\Product;
 use DateTime;
@@ -139,6 +140,7 @@ class ShipmentController extends Controller {
 							// 'derivery_date' => $row['derivery_date'],
 							// 'order_date' => $row['order_date'],
 							'user_id' => Auth::id(),
+							'status' => 'Stored',
 							'created_at' => new DateTime(),
 							'booking_date' => new DateTime(),
 							'updated_at' => new DateTime(),
@@ -336,6 +338,7 @@ class ShipmentController extends Controller {
 			$statusUpdate = new ShipmentStatus;
 			$statusUpdate->remark = $request->form['remark'];
 			$statusUpdate->status = $request->form['status'];
+			$statusUpdate->location = $request->form['location'];
 			$statusUpdate->user_id = Auth::id();
 			$statusUpdate->branch_id = Auth::user()->branch_id;
 			$statusUpdate->shipment_id = $statuses->id;
@@ -413,6 +416,19 @@ class ShipmentController extends Controller {
 		return Shipment::where('status', 'derivered')->where('branch_id', Auth::user()->branch_id)->get();
 	}
 
+	public function scheduled() {
+		// return Shipment::where('status', 'Scheduled')->get();
+		$all_shipment = Shipment::get();
+		foreach ($all_shipment as $shipment) {
+			$derivery_date = new Carbon($shipment->derivery_date);
+			$date1 = Carbon::today();
+			$date2 = new Carbon('tomorrow');
+        	$date2->diffInDays($date1);
+        	$shipment = Shipment::whereBetween('created_at', [$date1, $date2])->where('status', 'Scheduled')->get();
+		}
+		return $shipment;
+	}
+
 	// Chart
 	public function getChartData() {
 		$shipments = DB::table('products')
@@ -437,17 +453,28 @@ class ShipmentController extends Controller {
 
 	public function filterShipment(Request $request)
 	{
+		// return $request->all();
 		if ($request->form['start_date'] == '' || $request->form['end_date'] == '') {
 			if ($request->select['id'] == 'all') {
-				return Shipment::all();
+				if ($request->selectStatus['state'] == 'all') {
+					return Shipment::all();	
+				}else{
+					return Shipment::where('status', $request->selectStatus['state'])->get();
+				}
+				
 			}else{
 				return Shipment::where('branch_id', $request->select['id'])->get();
 			}
 		}else{
 			if ($request->select['id'] == 'all') {
-				return Shipment::whereBetween('created_at', [$request->form['start_date'], $request->form['end_date']])->get();
+				if ($request->selectStatus['state'] == 'all') {
+					return Shipment::whereBetween('created_at', [$request->form['start_date'], $request->form['end_date']])->get();
+				}else{
+					return Shipment::whereBetween('created_at', [$request->form['start_date'], $request->form['end_date']])->get();
+				}
 			}else{
 				return Shipment::where('branch_id', $request->select['id'])
+								->where('status', $request->selectStatus['state'])
 								->whereBetween('created_at', [$request->form['start_date'], $request->form['end_date']])
 								->get();
 			}

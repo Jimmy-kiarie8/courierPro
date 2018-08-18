@@ -19,30 +19,62 @@
 
                         <v-card>
 
-                            <select class="custom-select custom-select-md col-md-12" v-model="form.status" style="font-size: 15px;">
+                            <select class="custom-select custom-select-md col-md-12" v-model="updateitedItem.status">
   
-                              <option value="scheduled">scheduled</option>
-              
-                              <option value="Not Peaking">Not Peaking</option>
-              
-                              <option value="Cancled">Cancled</option>
-              
-                              <option value="Awaiting Confirmation">Awaiting Confirmation</option>
-              
+                                <option value="Awaiting Approval">Awaiting Approval</option>
+                
+                                <option value="Approved">Approved</option>
+                
+                                <option value="Cancelled">Cancelled</option>
+                
+                                <option value="Shipment Collected">Shipment Collected</option>
+                
+                                <option value="Waiting for Scan">Waiting for scan</option>
+                
+                                <option value="Ready For Depart">Ready For Depart</option>
+                
+                                <option value="Despatched">Despatched</option>
+                
+                                <option value="Arrived">Arrived</option>
+                
+                                <option value="Cleared">Cleared</option>
+                
+                                <option value="Transit">Transit</option>
+                
+                                <option value="Out For Destination">Out For Destination</option>
+                
+                                <option value="Out For Delivery">Out For Delivery</option>
+
+                                <option value="scheduled">scheduled</option>
+
+                                <option value="Not Peaking">Not Peaking</option>
+                
+                                <option value="Cancled">Cancled</option>
+                
+                                <option value="Awaiting Confirmation">Awaiting Confirmation</option>
+                
+                                <option value="Delivered">Delivered</option>
+                
+                                <option value="Returned">Returned</option>
+                
+                                <option value="Hold">Hold</option>
+                
                             </select>
 
                             <div v-if="form.status === 'scheduled'">
                                 <v-flex xs12 sm12>
 
-                                    <v-flex xs4 sm3>
-
-                                        <v-text-field v-model="form.scheduled_date" color="blue darken-2" label="Schedule Date" type="date"></v-text-field>
-
-                                    </v-flex>
+                                    <v-text-field v-model="form.scheduled_date" color="blue darken-2" label="Schedule Date" type="date"></v-text-field>
 
                                 </v-flex>
 
                             </div>
+
+                            <v-flex xs4 sm12>
+
+                                <v-text-field v-model="form.location" color="blue darken-2" label="Location" required></v-text-field>
+
+                            </v-flex>
 
                             <v-flex xs12 sm12>
 
@@ -52,13 +84,11 @@
 
                                         Remark <small>(optional)</small>
 
-                                    </div>
+                                    </div> 
 
                                 </v-textarea>
 
                             </v-flex>
-
-                            <v-btn color="primary" flat @click="UpdateShipment" :loading="loading" :disabled="loading">Update Status</v-btn>
 
                         </v-card>
 
@@ -78,9 +108,9 @@
 
                 <!-- Add Products -->
                 <v-card-actions>
-
                     <v-btn flat @click="close">Close</v-btn>
-
+                    <v-spacer></v-spacer>
+                    <v-btn color="primary" flat @click="UpdateShipment" :loading="loading" :disabled="loading">Update Status</v-btn>
                 </v-card-actions>
 
             </v-container>
@@ -110,7 +140,7 @@ export default {
             color: "",
 
             form: {
-              scheduled_date: '',
+                scheduled_date: '',
             },
         }
     },

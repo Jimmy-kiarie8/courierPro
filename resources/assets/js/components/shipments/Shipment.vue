@@ -18,8 +18,11 @@
                 <div v-show="!loader">
                     <v-card style="background: rgba(5, 117, 230, 0.16);">
                         <v-layout wrap>
-                            <v-flex xs4 sm3 offset-sm1>
-                                <v-select :items="AllBranches" v-model="select" :hint="`${select.branch_name}, ${select.id}`" label="Select" single-line item-text="branch_name" item-value="id" return-object persistent-hint></v-select>
+                            <v-flex xs4 sm2>
+                                <v-select :items="AllBranches" v-model="select" :hint="`${select.branch_name}, ${select.id}`" label="Filter By Branch" single-line item-text="branch_name" item-value="id" return-object persistent-hint></v-select>
+                            </v-flex>
+                            <v-flex xs4 sm2 offset-sm1>
+                                <v-select :items="statuses" v-model="selectItem" :hint="`${selectItem.state}, ${selectItem.state}`" label="Filter By Status" single-line item-text="state" item-value="state" return-object persistent-hint></v-select>
                             </v-flex>
                             <!-- <v-spacer></v-spacer> -->
                             <v-flex xs12 sm2 offset-sm1>
@@ -29,7 +32,7 @@
                                 <v-text-field v-model="form.end_date" color="blue darken-2" type="date" required></v-text-field>
                             </v-flex>
                             <!-- <v-spacer></v-spacer> -->
-                            <v-flex xs4 sm2>
+                            <v-flex xs4 sm1>
                                 <v-btn raised color="info" @click="sort">Filter</v-btn>
                             </v-flex>
                         </v-layout>
@@ -234,6 +237,35 @@ export default {
 
             },
 
+            selectItem: {
+                state: 'All',
+            },
+
+            statuses: [{
+                    state: 'Dispatched',
+                },
+
+                {
+                    state: 'Derivered',
+                },
+
+                {
+                    state: 'Not Peaking',
+                },
+
+                {
+                    state: 'cancled',
+                },
+
+                {
+                    state: 'Awaiting Confirmation',
+                },
+
+                {
+                    state: 'Schedueled',
+                },
+            ],
+
             items: [{
 
                     state: 'All',
@@ -402,6 +434,8 @@ export default {
                 }
             ],
             selected: [],
+
+            selectStatus: [],
 
             direction: "left",
 
@@ -619,6 +653,7 @@ export default {
             this.loading = true
             axios.post('filterShipment', {
                     select: this.select,
+                    selectStatus: this.selectItem,
                     form: this.form
                 })
                 .then((response) => {

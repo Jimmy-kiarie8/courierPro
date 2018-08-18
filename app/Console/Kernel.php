@@ -4,8 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use App\Notifications\SignupActivate;
-use App\User;
+use App\Console\Commands\ScheduledCommand;
+use agoalofalife\Reports\Console\ParseReportsCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -15,7 +15,10 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+
+    //This is the line of code added, at the end, we the have class name of ScheduledCommand.php inside app\console\commands
+        '\App\Console\Commands\ScheduledCommand',
+        '\App\Console\Commands\ReportCommand',
     ];
 
     /**
@@ -26,10 +29,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->call(function () {
-        //     User::find(1);
-        //     $user->notify(new SignupActivate($user));
-        // })->everyMinute();
+        //insert name and signature of you command and define the time of excusion
+        $schedule->command('notifications:ScheduledCommand')
+                 ->everyMinute();
+        $schedule->command('Mailreports:ReportMail')
+                ->everyMinute();
+        $schedule->command(ParseReportsCommand::class)->everyMinute();
+
     }
 
     /**

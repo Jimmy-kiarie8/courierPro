@@ -35,8 +35,10 @@
     {{-- <link href="{{ asset('vuetify/css/vuetify.min.css') }}" rel="stylesheet"> --}}
 </head>
 <body>
+        {{-- @include('reports::app') --}}
     <div id="app">
         <main class="py-4">
+
             @yield('content')
         </main>
     </div>

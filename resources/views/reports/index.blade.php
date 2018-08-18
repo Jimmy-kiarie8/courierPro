@@ -228,6 +228,35 @@
         <input type="date" name="end_date" class="input-control">
     </div> --}}
 </form>
+
+
+
+<form action="{{ route("displayReport") }}" method="post">
+    {{ csrf_field() }}
+    <select class="custom-select custom-select-md col-md-12 col-md-12" name="name" style="font-size: 13px;">
+        @foreach ($customers as $customer)
+            <option value="{{ $customer->name }}">{{ $customer->name }}</option>
+        @endforeach
+    </select>
+    Between <hr>
+    <v-flex xs10 sm9  offset-sm1>
+        <v-text-field
+        name="from_date"
+        type="date"
+        color="blue darken-2"
+        required
+        ></v-text-field>
+      </v-flex>
+    <v-flex xs10 sm9  offset-sm1>
+        <v-text-field
+        name="to_date"
+        type="date"
+        color="blue darken-2"
+        required
+        ></v-text-field>
+      </v-flex>
+    <v-btn flat type="submit" success color="black">Download</v-btn>
+</form>
 </v-card>
 </v-flex>
 </v-layout>

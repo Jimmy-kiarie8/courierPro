@@ -19,7 +19,8 @@ class CreateShipmentStatusesTable extends Migration
 			$table->integer('branch_id');
 			$table->integer('shipment_id');
 			$table->string('status');
-			$table->string('remark')->nullable();
+			$table->text('remark')->nullable();
+			$table->string('location')->nullable();
 			$table->softDeletes();
             $table->timestamps();
         });

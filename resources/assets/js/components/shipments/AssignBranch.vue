@@ -39,7 +39,6 @@
   
                     </v-flex>
   
-                    <v-btn color="primary" flat @click="branchAssign" :loading="loading" :disabled="loading">Update Branch</v-btn>
   
                   </v-card>
   
@@ -48,9 +47,9 @@
               </v-layout>
   
                <v-card-actions>
-
                   <v-btn flat @click="close">Close</v-btn>
-
+                    <v-spacer></v-spacer>
+                  <v-btn color="primary" flat @click="branchAssign" :loading="loading" :disabled="loading">Update Branch</v-btn>
                 </v-card-actions>
         
               </v-container>

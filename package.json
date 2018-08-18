@@ -27,9 +27,10 @@
         "vue-chartjs": "^3.3.1",
         "vue-chartkick": "^0.3.2",
         "vue-google-autocomplete": "^1.1.0",
-        "vue2-google-maps": "^0.9.7",
+        "vue-pdf": "^3.3.1",
         "vue-print-nb": "^1.0.3",
         "vue-router": "^3.0.1",
+        "vue2-google-maps": "^0.9.7",
         "vuetify": "^1.1.9"
     }
 }
