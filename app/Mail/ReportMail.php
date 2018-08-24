@@ -39,8 +39,6 @@ class ReportMail extends Mailable
 
         return $this->from('courier@courier.com')
                     ->markdown('mail/ReportCommand')
-                    // ->view('emails.InvoiceMail')
-                    // ->to($mail)
                     ->to('jimlaravel@gmail.com')
                     ->attachData($this->pdf, 'name.pdf', [
                         'mime' => 'application/pdf',

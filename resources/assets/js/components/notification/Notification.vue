@@ -6,7 +6,6 @@
                 <!-- <v-icon slot="badge" dark small>done</v-icon> -->
                 <!-- {{notifications.length}} -->
                 <span slot="badge">{{ notifications.length }}</span>
-
                 <v-icon color="grey lighten-1" large>
                     add_alert
                 </v-icon>

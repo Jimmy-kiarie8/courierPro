@@ -7,7 +7,7 @@ $factory->define(App\Branch::class, function (Faker $faker) {
         'user_id' => '1',
         'branch_name' => $faker->city,
         'email' => $faker->unique()->safeEmail,
-        'phone' => randomNumber($nbDigits = NULL, $strict = false),
+        'phone' => $faker->randomNumber($nbDigits = NULL, $strict = false),
         'address' => $faker->address,
     ];
 });

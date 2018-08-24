@@ -112,10 +112,10 @@ class ShipmentController extends Controller {
 	 */
 	public function import(Request $request) {
 		// return $request->all();
-		$message = 'New shipments have been added';
-		Notification::send(Auth::user(), new NotyExcel($message));
-		return redirect('courier#/Shipments');
-
+		// $message = 'New shipments have been added';
+		// Notification::send(Auth::user(), new NotyExcel($message));
+		// return redirect('courier#/Shipments');
+		// var_dump($request->client);die;
 		if ($request->file('shipment')) {
 			$path = $request->file('shipment')->getRealPath();
 			$data = Excel::load($path, function ($reader) {
@@ -154,6 +154,7 @@ class ShipmentController extends Controller {
 							'sender_address' => Auth::user()->address,
 							'sender_city' => Auth::user()->city,
 							'user_id' => Auth::id(),
+							'client_id' => $request->client,
 						];
 					}
 				}

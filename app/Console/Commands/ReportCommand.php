@@ -60,6 +60,9 @@ class ReportCommand extends Command
 		
 		$fromDate = Carbon::today();
 		$prev_month = $today->subMonth();
+		$this_day = $fromDate->addDays(1);
+
+		// var_dump($fromDate .'::::'. $prev_month);die;
 
 		$toDate = '2018-08-17';
 		$sortBy = 'id';
@@ -83,17 +86,17 @@ class ReportCommand extends Command
 				}
 			}
 		}
-		$customers = User::whereIn('id', $userArr)->get();
+		$customers = User::select('id', 'name', 'email')->whereIn('id', $userArr)->get();
 		$cust_emails = $customers->map(function ($customer) {
-			return $customer->only('email', 'name');
+			return $customer->only('email', 'name', 'id');
 		});
 
-		foreach ($cust_emails as $mails) {
+		foreach ($customers as $mails) {
 		$email = $mails['email'];
-			
 		// Do some querying..
-		$queryBuilder = Shipment::whereBetween('created_at', [$prev_month, $fromDate])
-							->where('client_name', $mails['name'])
+		$queryBuilder = Shipment::setEagerLoads([])
+							->whereBetween('created_at', [$prev_month, $fromDate])
+							->where('client_id', $mails['id'])
 							->orderBy($sortBy);
 		if ($queryBuilder->count() > 0) {
 			$columns = [
@@ -122,6 +125,5 @@ class ReportCommand extends Command
 			Mail::send(new ReportMail($user, $email, $pdf));
 		}
 	}
-
     }
 }

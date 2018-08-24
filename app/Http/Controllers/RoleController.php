@@ -59,12 +59,9 @@ class RoleController extends Controller {
 
 	public function carbon(Request $request)
 	{
-
 		$all_shipment = Shipment::setEagerLoads([])->get();
-		$user = User::find(1);
-		// $user->notify(new ShipmentNoty($all_shipment));
-		// return;
 		$today = Carbon::now();
+		 $user = User::find(1);
 		// foreach ($all_shipment as $shipment) {
 		// 	$derivery_date = new Carbon($shipment->derivery_date);
 		// 	$date1 = Carbon::today();
@@ -77,7 +74,7 @@ class RoleController extends Controller {
 
 		
 		$fromDate = Carbon::today();
-		$next_month = $today->addMonth();
+		$prev_month = $today->subMonth();
 
 		$toDate = '2018-08-17';
 		$sortBy = 'id';
@@ -87,7 +84,7 @@ class RoleController extends Controller {
 	
 		// For displaying filters description on header
 		$meta = [
-			'Report From' => $fromDate . ' To ' . $toDate,
+			'Report From' => $prev_month . ' To ' . $fromDate,
 			'Sort By' => $sortBy
 		];
 		
@@ -103,46 +100,43 @@ class RoleController extends Controller {
 		}
 		$customers = User::whereIn('id', $userArr)->get();
 		$cust_emails = $customers->map(function ($customer) {
-			return $customer->only('email', 'name');
+			return $customer->only('email', 'name', 'id');
 		});
 
 		foreach ($cust_emails as $mails) {
 		$email = $mails['email'];
 			
 		// Do some querying..
-		$queryBuilder = Shipment::whereBetween('created_at', ['2018-08-01' ,$next_month])
-							->where('client_name', $mails['name'])
+		return $queryBuilder = Shipment::whereBetween('created_at', [$prev_month, $fromDate])
+							->where('client_id', $mails['id'])
 							->orderBy($sortBy)->get();
-		$columns = [
-			'airway bill no',
-			'sender name',
-			'sender email',
-			'sender city',
-			'sender phone',
-			'client name',
-			'client email',
-			'client city',
-			'client phone',
-			'amount ordered',
-			'derivery date',
-		];
-		
-		$pdf = ExcelReport::of($title, $meta, $queryBuilder, $columns)
-						->editColumn('created at', [
-							'displayAs' => function($result) {
-								return $result->created_at->format('d M Y');
-							}
-						])
-						->setCss([
-							'.head-content' => 'border-width: 1px',
-						 ])
-						->make('csv'); // or download('f
-						// $pdf = json_decode(json_encode($pdf_new), true);
-						// var_dump($pdf);die;
-			Mail::send(new ReportMail($user, $email));
-
-
+		if ($queryBuilder->count() > 0) {
+			$columns = [
+				'airway bill no',
+				'sender name',
+				'sender city',
+				'sender phone',
+				'client email',
+				'client city',
+				'client phone',
+				'amount ordered',
+				'derivery date',
+			];
+			
+			$pdf = PdfReport::of($title, $meta, $queryBuilder, $columns)
+							->editColumn('created at', [
+								'displayAs' => function($result) {
+									return $result->created_at->format('d M Y');
+								}
+							])
+							->setCss([
+								'.head-content' => 'border-width: 1px',
+							])
+							->limit(10)
+							->stream(); // or download('filename here..') to download pdf
+			Mail::send(new ReportMail($user, $email, $pdf));
 		}	
 	}
 
+}
 }

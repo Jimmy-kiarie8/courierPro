@@ -3,6 +3,7 @@
 
     <v-container fluid fill-height>
         <v-layout justify-center align-center>
+            <v-btn flat color="orange" @click="test">Test</v-btn>
             <download-excel :data="AllShipments">
                 Download Data
                 <img src="/storage/csv.png">

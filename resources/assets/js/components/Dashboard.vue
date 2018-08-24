@@ -6,67 +6,67 @@
                 <v-progress-circular :width="3" indeterminate color="red" style="margin: 1rem"></v-progress-circular>
             </div>
             <v-flex xs12 sm12 v-show="!loader">
-              <Notification :user="user"></Notification>
+                <Notification :user="user"></Notification>
                 <v-layout row wrap>
                     <v-flex xs6 sm3>
-                        <v-card>
+                        <v-card color="light-blue accent-4">
                             <v-card-actions>
                                 <v-layout row wrap>
                                     <v-flex sm4>
-                                        <i class="pull-left fa fa-globe icon-rounded" style="font-size: 70px; color: red"></i>
+                                        <i class="pull-left fa fa-globe icon-rounded" style="font-size: 70px; color: white"></i>
                                     </v-flex>
                                     <v-flex sm7 offset-sm1>
                                         <strong>10</strong>
                                         <v-divider></v-divider>
-                                        <h6>Total Bookings</h6>
+                                        <h6 style="color: white;">Total Bookings</h6>
                                     </v-flex>
                                 </v-layout>
                             </v-card-actions>
                         </v-card>
                     </v-flex>
                     <v-flex xs6 sm3>
-                        <v-card>
+                        <v-card color="green accent-4">
                             <v-card-actions>
                                 <v-layout row wrap>
                                     <v-flex sm4>
-                                        <i class="pull-left fa fa-exchange" style="font-size: 70px; color: purple"></i>
+                                        <i class="pull-left fa fa-exchange" style="font-size: 70px; color: white"></i>
                                     </v-flex>
                                     <v-flex sm7 offset-sm1>
                                         <strong>12</strong>
                                         <v-divider></v-divider>
-                                        <h6>Total Freight</h6>
+                                        <h6 style="color: white;">Total Freight</h6>
                                     </v-flex>
                                 </v-layout>
                             </v-card-actions>
                         </v-card>
                     </v-flex>
                     <v-flex xs6 sm3>
-                        <v-card>
+                        <v-card color="yellow darken-1">
                             <v-card-actions>
                                 <v-layout row wrap>
                                     <v-flex sm4>
-                                        <i class="pull-left fa fa-check-circle" style="font-size: 70px; color: indigo"></i>
+                                        <i class="pull-left fa fa-check-circle" style="font-size: 70px; color: white"></i>
                                     </v-flex>
                                     <v-flex sm7 offset-sm1>
                                         <strong>4</strong>
                                         <v-divider></v-divider>
-                                        <h6>Total Derivered</h6>
+                                        <h6 style="color: white;">Total Derivered</h6>
                                     </v-flex>
                                 </v-layout>
                             </v-card-actions>
                         </v-card>
                     </v-flex>
                     <v-flex xs6 sm3>
-                        <v-card>
+                        <v-card color="brown lighten-1">
                             <v-card-actions>
                                 <v-layout row wrap>
                                     <v-flex sm4>
-                                        <i class="pull-left fa fa-plane" style="font-size: 70px; color: orange"></i>
+                                        <i class="pull-left fa fa-plane" style="font-size: 70px; color: white"></i>
                                     </v-flex>
                                     <v-flex sm7 offset-sm1>
                                         <strong>2</strong>
                                         <v-divider></v-divider>
-                                        <h6>Total Freight</h6>
+                                        <h6 style="color: white;">Total Freight</h6>
                                     </v-flex>
                                 </v-layout>
                             </v-card-actions>
@@ -179,6 +179,79 @@
                         </v-layout>
                     </v-flex>
                 </v-layout>
+                <v-divider></v-divider>
+                <v-divider></v-divider>
+
+                <v-layout wrap>
+                    <v-flex xs3 sm2>
+                        <v-card color="indigo">
+                            <v-card-actions>
+                                <v-layout row wrap>
+                                    <router-link to="/shipments" class="v-list__tile v-list__tile--link">
+                                        <v-flex sm4>
+                                            <v-icon color="white">local_shipping</v-icon>
+                                        </v-flex>
+                                        <v-divider></v-divider>
+                                        <v-flex sm7 offset-sm1>
+                                            <h6 style="color: white;">Add Shipment</h6>
+                                        </v-flex>
+                                    </router-link>
+                                </v-layout>
+                            </v-card-actions>
+                        </v-card>
+                    </v-flex>
+                    <v-flex xs3 sm2>
+                        <v-card color="blue-grey darken-1">
+                            <v-card-actions>
+                                <v-layout row wrap>
+                                    <router-link to="/users" class="v-list__tile v-list__tile--link">
+                                        <v-flex sm4>
+                                            <v-icon color="white">account_circle</v-icon>
+                                        </v-flex>
+                                        <v-divider></v-divider>
+                                        <v-flex sm7 offset-sm1>
+                                            <h6 style="color: white;">Users</h6>
+                                        </v-flex>
+                                    </router-link>
+                                </v-layout>
+                            </v-card-actions>
+                        </v-card>
+                    </v-flex>
+                    <v-flex xs3 sm2>
+                        <v-card color="indigo darken-1">
+                            <v-card-actions>
+                                <v-layout row wrap>
+                                    <router-link to="/branches" class="v-list__tile v-list__tile--link">
+                                        <v-flex sm4>
+                                            <v-icon color="white">widgets</v-icon>
+                                        </v-flex>
+                                        <v-divider></v-divider>
+                                        <v-flex sm7 offset-sm1>
+                                            <h6 style="color: white;">Branches</h6>
+                                        </v-flex>
+                                    </router-link>
+                                </v-layout>
+                            </v-card-actions>
+                        </v-card>
+                    </v-flex>
+                    <v-flex xs3 sm2>
+                        <v-card color="deep-purple darken-4">
+                            <v-card-actions>
+                                <v-layout row wrap>
+                                    <router-link to="/reports" class="v-list__tile v-list__tile--link">
+                                        <v-flex sm4>
+                                            <v-icon color="white">book</v-icon>
+                                        </v-flex>
+                                        <v-divider></v-divider>
+                                        <v-flex sm7 offset-sm1>
+                                            <h6 style="color: white;">Add Reports</h6>
+                                        </v-flex>
+                                    </router-link>
+                                </v-layout>
+                            </v-card-actions>
+                        </v-card>
+                    </v-flex>
+                </v-layout>
             </v-flex>
         </v-layout>
     </v-container>
@@ -188,10 +261,10 @@
 <script>
 let Notification = require('./notification/Notification.vue');
 export default {
-  props: ['user'],
-  components: {
-    Notification
-  },
+    props: ['user'],
+    components: {
+        Notification
+    },
     data() {
         return {
             Allusers: {},
@@ -294,7 +367,8 @@ export default {
 #cols {
     background: #f0f0f0;
 }
-.v-content__wrap{
+
+.v-content__wrap {
     margin-top: -60px;
 }
 </style>

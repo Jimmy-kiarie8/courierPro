@@ -49,7 +49,6 @@ Vue.component('attachment-list', require('./components/AttachmentList.vue'));
 let dashboard = require('./components/Dashboard.vue');
 
 let myHeader = require('./components/include/Header.vue');
-let HeadView = require('./components/include/HeadView.vue');
 let myUser = require('./components/users/User.vue');
 let myDrivers = require('./components/drivers/Driver.vue');
 let myShipment = require('./components/shipments/Shipment.vue');
@@ -69,6 +68,7 @@ let myPdf = require('./components/csv/test.vue');
 let mybranchShip = require('./components/branches/BranchShipments.vue');
 let myRoles = require('./components/users/roles/Roles.vue');
 let myscheduled = require('./components/shipments/Scheduled.vue');
+let myTasks = require('./components/tasks/Task.vue');
 
 const routes = [
 {path: '/', component: dashboard },
@@ -89,6 +89,7 @@ const routes = [
 {path: '/roles', component: myRoles },
 {path: '/branch/:id', component: mybranchShip },
 {path: '/scheduled', component: myscheduled },
+{path: '/tasks', component: myTasks },
 ]
 const router = new VueRouter({
 // mode: 'history',
@@ -101,7 +102,7 @@ const app = new Vue({
     components: {
     	myHeader, myUser, myDrivers, myShipment, myScanner, myContainer, myMap,
         myBranch, myProfile, myCompany, myCustomer, mysubsicriber, myInvice, myReceipt,
-        myReports, myPdf, mybranchShip, myRoles, myscheduled, HeadView
+        myReports, myPdf, mybranchShip, myRoles, myscheduled, myTasks
     },
     data: {
     shipments: [],

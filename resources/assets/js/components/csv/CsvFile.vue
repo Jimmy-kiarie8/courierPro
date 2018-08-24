@@ -7,7 +7,16 @@
         <v-container grid-list-md>
             <v-card-text>
                 <v-layout wrap>
+
                     <form action="csv/import" method="post" enctype="multipart/form-data">
+                        <div class="form-group row">
+                            <label for="password" class="col-md-4 col-form-label text-md-right">Paid</label>
+                            <!-- <div class="col-md-12"> -->
+                            <select class="custom-select custom-select-md col-md-3" name="client">
+                                <option v-for="client in Allcustomers" :key="client.id" :value="client.id">{{ client.name }}</option>
+                            </select>
+                        </div>
+
                         <v-btn color="red" darken-1 raised @click="onPickFile" style="color: #fff;">Upload</v-btn>
                         <input type="file" name="shipment" id="csv" ref="fileInput" style="display: none">
                         <v-divider></v-divider>
@@ -30,6 +39,7 @@ export default {
     data() {
         return {
             imagePlaced: false,
+            Allcustomers: [],
         }
     },
     methods: {
@@ -39,6 +49,24 @@ export default {
         close() {
             this.$emit('closeRequest')
         }
-    }
+    },
+
+    mounted() {
+        axios
+            .get("getCustomer")
+
+            .then(response => {
+                this.Allcustomers = response.data;
+
+                this.loader = false;
+            })
+
+            .catch(error => {
+                this.errors = error.response.data.errors;
+
+                this.loader = false;
+            });
+
+    },
 }
 </script>
