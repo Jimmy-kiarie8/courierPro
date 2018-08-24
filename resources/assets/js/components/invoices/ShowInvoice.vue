@@ -1,259 +1,224 @@
 <template>
-	<v-layout row justify-center>
-	
-		<v-dialog v-model="openAddRequest" persistent max-width="900px">
-	
-			<v-card>
-	
-				<v-card-title fixed>
-	
-					<span class="headline">Invoice</span>
-	
-				</v-card-title>
-	
-				<v-card-text>
-	
-					<v-container grid-list-md>
-	
-						<v-layout wrap>
-	
-							<div class="panel panel-default col-md-12">
-	
-								<div class="panel-heading">
-	
-									<div class="clearfix">
-	
-										<span class="panel-title">Invoice</span>
-	
-										<!--<div class="pull-right">
-	
-							                 <a href="{{route('invoices.index')}}" class="btn btn-default">Back</a>
-	
-							                <a href="{{route('invoices.edit', $invoice)}}" class="btn btn-primary">Edit</a> 
-	
-							                <form class="form-inline" method="post"
-	
-							                    action="{{route('invoices.destroy', $invoice)}}"
-	
-							                    onsubmit="return confirm('Are you sure?')"
-	
-							                >
-	
-							                    <input type="hidden" name="_method" value="delete">
-	
-							                    <input type="hidden" name="_token" value="{{csrf_token()}}">
-	
-							                    <input type="submit" value="Delete" class="btn btn-danger">
-	
-							                </form> 
-	
-							            </div>-->
-	
-									</div>
-	
-								</div>
-	
-								<div class="panel-body">
-	
-									<div class="row">
-	
-										<div class="col-sm-4">
-	
-											<div class="form-group">
-	
-												<label>Invoice No.</label>
-	
-												<p>{{invoice.invoice_no}}</p>
-	
-											</div>
-	
-											<div class="form-group">
-	
-												<label>Grand Total</label>
-	
-												<p>Ksh{{invoice.grand_total}}</p>
-	
-											</div>
-	
-										</div>
-	
-										<div class="col-sm-4">
-	
-											<div class="form-group">
-	
-												<label>Client</label>
-	
-												<p>{{invoice.client}}</p>
-	
-											</div>
-	
-											<div class="form-group">
-	
-												<label>Client Address</label>
-	
-												<pre class="pre">{{invoice.client_address}}</pre>
-	
-											</div>
-	
-										</div>
-	
-										<div class="col-sm-4">
-	
-											<div class="form-group">
-	
-												<label>Title</label>
-	
-												<p>{{invoice.title}}</p>
-	
-											</div>
-	
-											<div class="row">
-	
-												<div class="col-sm-6">
-	
-													<label>Invoice Date</label>
-	
-													<p>{{invoice.invoice_date}}</p>
-	
-												</div>
-	
-												<div class="col-sm-6">
-	
-													<label>Due Date</label>
-	
-													<p>{{invoice.due_date}}</p>
-	
-												</div>
-	
-											</div>
-	
-										</div>
-	
-									</div>
-	
-									<hr>
-	
-									<table class="table table-bordered table-striped">
-	
-										<thead>
-	
-											<tr>
-	
-												<th>Product Name</th>
-	
-												<th>Price</th>
-	
-												<th>Qty</th>
-	
-												<th>Total</th>
-	
-											</tr>
-	
-										</thead>
-	
-										<tbody>
-	
-											<tr v-for="product in invoice.products">
-	
-												<td class="table-name">{{product.name}}</td>
-	
-												<td class="table-price">Ksh{{product.price}}</td>
-	
-												<td class="table-qty">{{product.qty}}</td>
-	
-												<td class="table-total text-right">Ksh{{product.qty * product.price}}</td>
-	
-											</tr>
-	
-										</tbody>
-	
-										<tfoot>
-	
-											<tr>
-	
-												<td class="table-empty" colspan="2"></td>
-	
-												<td class="table-label">Sub Total</td>
-	
-												<td class="table-amount">Ksh{{invoice.sub_total}}</td>
-	
-											</tr>
-	
-											<tr>
-	
-												<td class="table-empty" colspan="2"></td>
-	
-												<td class="table-label">Discount</td>
-	
-												<td class="table-amount">Ksh{{invoice.discount}}</td>
-	
-											</tr>
-	
-											<tr>
-	
-												<td class="table-empty" colspan="2"></td>
-	
-												<td class="table-label">Grand Total</td>
-	
-												<td class="table-amount">Ksh{{invoice.grand_total}}</td>
-	
-											</tr>
-	
-										</tfoot>
-	
-									</table>
-	
-								</div>
-	
-							</div>
-	
-						</v-layout>
-	
-					</v-container>
-	
-				</v-card-text>
-	
-				<v-card-actions>
-	
-					<v-btn @click="close" flat color="primary">Close</v-btn>
-	
-				</v-card-actions>
-	
-			</v-card>
-	
-		</v-dialog>
-	
-	</v-layout>
+<v-layout row justify-center>
+
+    <v-dialog v-model="openAddRequest" persistent max-width="1300px">
+
+        <v-card>
+
+            <v-card-title fixed>
+
+                <span class="headline">Invoice</span>
+
+            </v-card-title>
+
+            <v-card-text>
+
+                <v-container grid-list-md>
+
+                    <v-layout wrap>
+
+                        <div class="panel panel-default col-md-12" id="printMe">
+
+                            <div class="panel-heading">
+
+                                <div class="clearfix">
+
+                                    <span class="panel-title"><strong>SPEED BALL COURIER SERVICES LTD</strong></span>
+
+                                </div>
+
+                            </div>
+
+                            <div class="panel-body">
+
+                                <div class="row">
+
+                                    <div class="col-sm-4">
+
+                                        <div class="form-group">
+
+                                            <label><b>VAT NO:</b> </label>
+
+                                            <span>P051681186K</span>
+
+                                        </div>
+
+                                        <div class="form-group">
+
+                                            <label><b> P.O BOX:</b></label>
+
+                                            <span>17254</span>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-sm-4">
+										
+                                        <label><b></b> Nyayo Embakasi.Court328.House No.5</label>
+
+                                            <!-- <pre class="pre">{{invoice.client_address}}</pre> -->
+
+
+                                    </div>
+
+                                    <div class="col-sm-4">
+
+                                        <div class="form-group">
+
+                                            <label><b>Number</b> :</label>
+
+                                            <span>{{invoice.invoice_no}}</span>
+
+                                        </div>
+
+
+                                            <div class="">
+
+                                                <label><b>Date</b> </label>
+
+                                                <span>{{ invoice.invoice_date }}</span>
+
+                                            </div>
+
+                                            <div class="">
+
+                                                <label><b>page</b> </label>
+
+                                                <span>1/3</span>
+
+                                            </div>
+                                            <div class="">
+
+                                                <label><b>Reference:</b> :</label>
+
+                                                <span></span>
+
+                                            </div>
+                                            <div class="">
+
+                                                <label><b>Sales Rep:</b> </label>
+
+                                                <span>1/3</span>
+
+                                            </div>
+                                            <div class="">
+
+                                                <label><b>Due Date:</b> </label>
+
+                                                <span>{{ invoice.due_date }}</span>
+
+                                            </div>
+                                            <div class="">
+
+                                                <label><b>Overrall Discount%:</b> </label>
+
+                                                <span>1000</span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <hr>
+
+                                <table class="table table-bordered table-striped">
+
+                                    <thead>
+
+                                        <tr>
+                                            <th>Description</th>
+                                            <th>Quantity</th>
+                                            <th>Excl.Price</th>
+                                            <th>Discount</th>
+                                            <th>Vat</th>
+                                            <th>Exclusive Total</th>
+                                            <th>Inclusive Total</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr v-for="product in invoice.products" :key="product.id">
+                                            <td class="table-name">{{product.name}}</td>
+                                            <td class="table-qty">{{product.qty}}</td>
+                                            <td class="table-price">Ksh{{product.price}}</td>
+                                            <td class="table-price">Ksh{{ invoice.discount}}</td>
+                                            <td class="table-price">Ksh{{ invoice.vat}}</td>
+                                            <td class="table-total text-right">Ksh{{product.qty * product.price}}</td>
+                                            <td class="table-total text-right">Ksh{{product.qty * product.price}}</td>
+                                        </tr>
+                                    </tbody>
+
+                                    <tfoot>
+                                        <tr>
+                                            <td class="table-empty" colspan="5"></td>
+                                            <td class="table-label"><b>Total Discount</b></td>
+                                            <td class="table-amount">Ksh{{invoice.discount}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table-empty" colspan="5"></td>
+                                            <td class="table-label"><b>Total Exclusive</b></td>
+                                            <td class="table-amount">Ksh{{ invoice.discount}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table-empty" colspan="5"></td>
+                                            <td class="table-label"><b>Sub Total</b></td>
+                                            <td class="table-amount">Ksh{{invoice.sub_total}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="table-empty" colspan="5"></td>
+                                            <td class="table-label"><b>Total</b></td>
+                                            <td class="table-amount">Ksh{{invoice.grand_total}}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                        </div>
+                    </v-layout>
+
+                </v-container>
+
+            </v-card-text>
+
+            <v-card-actions>
+                <v-btn @click="close" flat color="primary">Close</v-btn>
+                <v-spacer></v-spacer>
+                <v-btn  v-print="'#printMe'" flat color="primary">Print</v-btn>
+            </v-card-actions>
+
+        </v-card>
+
+    </v-dialog>
+
+</v-layout>
 </template>
 
 <script>
-	export default {
-	
-		props: ['openAddRequest', 'invoice'],
-	
-		data() {
-	
-			return {
-	
-	
-	
-			}
-	
-		},
-	
-		methods: {
-	
-			close() {
-	
-				this.$emit('closeRequest')
-	
-			},
-	
-		},
-	
-	
-	
-		mounted() {},
-	
-	}
+export default {
+
+    props: ['openAddRequest', 'invoice'],
+
+    data() {
+
+        return {
+
+        }
+
+    },
+
+    methods: {
+
+        close() {
+
+            this.$emit('closeRequest')
+
+        },
+
+    },
+
+    mounted() {},
+
+}
 </script>

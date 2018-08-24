@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+<head-view :user="{{ Auth::user() }}"></head-view>
+<a class="btn btn-primary" href="http://courier.dev/courier#/">Back</a>
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">

@@ -10,11 +10,15 @@ use Maatwebsite\Excel\Facades\Excel;
 use PdfReport;
 use ExcelReport;
 use Illuminate\Support\Carbon;
+use App\Exports\Reports;
+// use Maatwebsite\Excel\Exporter;
+// use Maatwebsite\Excel\Facades\Excel;
 
 use App\Mail\ReportMail;
 
 
 class ReportController extends Controller {
+	
 	public function index() {
 		$clients = shipment::where('branch_id', Auth::user()->branch_id)->get();
 		// $customers = User::where('branch_id', Auth::user()->branch_id)->get();
@@ -27,71 +31,113 @@ class ReportController extends Controller {
 				}
 			}
 		}
+		$drivers = $this->getDrivers();
+		
 		$customers = User::whereIn('id', $userArr)->get();
 		// return json_decode(json_encode($customers));
-		return view('reports.index', compact('customers', 'clients'));
+		return view('reports.index', compact('customers', 'clients', 'drivers'));
+	}
+
+	
+	public function getDrivers()
+	{
+		$users = User::with('roles')->get();
+		$userArr = [];
+		foreach ($users as $user) {
+				// var_dump($user->roles); die;
+			foreach ($user->roles as $role) {
+				if ($role->name == 'Driver') {
+					$userArr[] = $role->pivot->user_id;		
+				}
+			}
+		}
+		$drivers = User::whereIn('id', $userArr)->get();
+		return $drivers;
 	}
 
 	public function userDateExpo(Request $request) {
 		// var_dump($request->all());die;
-		// var_dump($request->name);die;
 		// var_dump(Shipment::whereBetween('created_at', [$request->start_date, $request->end_date])->where('client_name', $request->name)->get());die;
 		$date_array = array(
 			'start_date' => $request->start_date,
 			'end_date' => $request->end_date,
 		);
 		$client_id = $request->name;
-		$results = Excel::create('Shipment', function ($excel) use ($date_array, $client_id) {
-			// var_dump($date_array); die;
-			// var_dump($client_id); die;
+		$columns = [
+			'order_id',
+			'sender_name',
+			'sender_email',
+			'sender_phone',
+			'sender_city',
+			'sender_address',
+			'driver',
+			'client_name',
+			'client_email',
+			'client_phone',
+			'client_city',
+			'client_address',
+			'derivery_status',
+			'amount_ordered',
+			'booking_date',
+		];
 
-			$excel->sheet('Sheetname', function ($sheet) use ($date_array, $client_id) {
-				$start_date = $date_array['start_date'];
-				$end_date = $date_array['end_date'];
-				// var_dump($client_id);die;
-				// $shipment = Shipment::whereBetween('created_at', ['2018-01-01', '2018-08-16'])->where('client_name', $client_id)->get();
-				// foreach ($date_array as $dates) {
-				// 	// var_dump($dates);die;
-				// 	$start_date = $dates;
-				// 	$end_date = $dates;
-				// 	$new_date[] = array(
-				// 		$start_date,
-				// 		$end_date,
-				// 	);
-				// }
-				// var_dump($shipment);die;
-				$sheet->fromModel(Shipment::whereBetween('created_at', $date_array)->where('client_name', '=', $client_id)->get());
+		$columns_name = [
+			'order_id As Order Id',
+			'sender_name As Sender Name',
+			'sender_email As Sender Email',
+			'sender_phone As Sender Phone',
+			'sender_city As Sender City',
+			'sender_address As Sender Address',
+			'driver As Driver',
+			'client_name As Client Name',
+			'client_email As Client Email',
+			'client_phone As Client Phone',
+			'client_city As Client City',
+			'client_address As Client Address',
+			'derivery_status As Derivery Status',
+			'amount_ordered As Quantity',
+			'booking_date As Booking Date',
+		];
+		return $query = Shipment::select($columns)->setEagerLoads([])->get();
+		$results = Excel::create('Shipment', function ($excel) use ($query) {
+			$excel->sheet('Sheetname', function ($sheet) use ($query) {
+				$sheet->fromArray($query);
 			});
 
 		})->download('xls');
-
-		if ($results) {
-			echo "success";
-		} else {
-			echo 'failed';
-		}
-		// return;
-		die;
+		return redirect('/shipreports');
 	}
 	public function shipmentExpo(Request $request) {
 		// var_dump($request->id); die;
 		$results = Excel::create('Shipment', function ($excel) {
 
 			$excel->sheet('Sheetname', function ($sheet) {
+				
+			$columns = [
+				'order_id',
+				'sender_name',
+				'sender_email',
+				'sender_phone',
+				'sender_city',
+				'sender_address',
+				'driver',
+				'client_name',
+				'client_email',
+				'client_phone',
+				'client_city',
+				'client_address',
+				'derivery_status',
+				'amount_ordered',
+				'booking_date',
+			];
 				// $model =
-				$sheet->fromModel(Shipment::all());
+				$sheet->fromModel(Shipment::select($columns)->setEagerLoads([])->get());
 
 			});
 
 		})->download('xls');
-
-		if ($results) {
-			echo "success";
-		} else {
-			echo 'failed';
-		}
+		return redirect('/shipreports');
 		// return;
-		die;
 	}
 	public function userExpo() {
 		$results = Excel::create('Users', function ($excel) {
@@ -103,12 +149,7 @@ class ReportController extends Controller {
 			});
 
 		})->export('xls');
-
-		if ($results) {
-			echo "success";
-		} else {
-			echo 'Failed';
-		}
+		return redirect('/shipreports');
 		// return;
 	}
 	public function deriverdExpo() {
@@ -121,12 +162,7 @@ class ReportController extends Controller {
 			});
 
 		})->export('xls');
-
-		if ($results) {
-			echo "success";
-		} else {
-			echo 'Failed';
-		}
+		return redirect('/shipreports');
 	}
 	public function customersExpo() {
 		$results = Excel::create('Users', function ($excel) {
@@ -138,12 +174,7 @@ class ReportController extends Controller {
 			});
 
 		})->export('xls');
-
-		if ($results) {
-			echo "success";
-		} else {
-			echo 'Failed';
-		}
+		return redirect('/shipreports');
 	}
 	public function dispatchedExpo() {
 		$results = Excel::create('Users', function ($excel) {
@@ -155,18 +186,7 @@ class ReportController extends Controller {
 			});
 
 		})->export('xls');
-
-		if ($results) {
-			echo "success";
-		} else {
-			echo 'Failed';
-		}
-
-	}
-	public function agentsExpo() {
-
-	}
-	public function cancledExpo() {
+		return redirect('/shipreports');
 
 	}
 	public function pendingExpo() {
@@ -174,17 +194,29 @@ class ReportController extends Controller {
 
 			$excel->sheet('Sheetname', function ($sheet) {
 
-				$sheet->fromModel(Shipment::where('status', 'pending')->get());
+				$columns = [
+					'order_id',
+					'sender_name',
+					'sender_email',
+					'sender_phone',
+					'sender_city',
+					'sender_address',
+					'driver',
+					'client_name',
+					'client_email',
+					'client_phone',
+					'client_city',
+					'client_address',
+					'derivery_status',
+					'amount_ordered',
+					'booking_date',
+				];
+				$sheet->fromModel(Shipment::select($columns)->where('status', 'pending')->get());
 
 			});
 
 		})->export('xls');
-
-		if ($results) {
-			echo "success";
-		} else {
-			echo 'Failed';
-		}
+		return redirect('/shipreports');
 	}
 	public function bookingExpo() {
 
@@ -194,22 +226,36 @@ class ReportController extends Controller {
 
 			$excel->sheet('Sheetname', function ($sheet) {
 
-				$sheet->fromModel(Shipment::where('status', 'approved')->get());
+				$columns = [
+					'order_id',
+					'sender_name',
+					'sender_email',
+					'sender_phone',
+					'sender_city',
+					'sender_address',
+					'driver',
+					'client_name',
+					'client_email',
+					'client_phone',
+					'client_city',
+					'client_address',
+					'derivery_status',
+					'amount_ordered',
+					'booking_date',
+				];
+				$sheet->fromModel(Shipment::select($columns)->where('status', 'approved')->get());
 
 			});
 
 		})->export('xls');
+		return redirect('/shipreports');
 
-		/*if ($results) {
-				echo "success";
-			} else {
-				echo 'Failed';
-		*/
 	}
 
 	// PdfReport Aliases
 
-public function displayReport(Request $request) {
+public function dsplayReport(Request $request) {
+		// return Excel::download(new Reports, 'reports.xlsx');
 	$all_shipment = Shipment::setEagerLoads([])->get();
 	$today = Carbon::now();
 	 $user = User::find(1);
@@ -275,19 +321,56 @@ public function displayReport(Request $request) {
 		'derivery date',
 	];
 	
-	$pdf = PdfReport::of($title, $meta, $queryBuilder, $columns)
-					->editColumn('created at', [
-						'displayAs' => function($result) {
-							return $result->created_at->format('d M Y');
-						}
-					])
-					->setCss([
-						'.head-content' => 'border-width: 1px',
-					 ])
-					->limit(10)
-					->stream(); // or download('f
+	$pdf = Excel::create($title, $meta, $queryBuilder, $columns)
+					// ->editColumn('created at', [
+					// 	'displayAs' => function($result) {
+					// 		return $result->created_at->format('d M Y');
+					// 	}
+					// ])
+					// ->setCss([
+					// 	'.head-content' => 'border-width: 1px',
+					//  ])
+					// ->limit(10)
+					// ->stream(); // or download('f
+					->export('xls');
 					return $pdf;
 
 	}	
-}
+	}
+
+	
+	public function displayReport(Request $request) {
+		// var_dump($request->all());die;
+		$date_array = array(
+			'start_date' => $request->start_date,
+			'end_date' => $request->end_date,
+		);
+		$status = $request->status;
+		$query = Shipment::setEagerLoads([])->whereBetween('created_at', [$date_array])->where('status',$status)->get();
+		// var_dump($query);die;
+		$results = Excel::create('Shipment', function ($excel) use ($query) {
+			$excel->sheet('Sheetname', function ($sheet) use ($query) {
+				$sheet->fromArray($query);
+			});
+
+		})->download('xls');
+		return redirect('/shipreports');
+	}
+	public function DriverReport(Request $request) {
+		// var_dump($request->all());die;
+		$date_array = array(
+			'start_date' => $request->start_date,
+			'end_date' => $request->end_date,
+		);
+		$status = $request->status;
+		$query = Shipment::setEagerLoads([])->whereBetween('created_at', [$date_array])->where('status',$status)->get();
+		// var_dump($query);die;
+		$results = Excel::create('Shipment', function ($excel) use ($query) {
+			$excel->sheet('Sheetname', function ($sheet) use ($query) {
+				$sheet->fromArray($query);
+			});
+
+		})->download('xls');
+		return redirect('/shipreports');
+	}
 }

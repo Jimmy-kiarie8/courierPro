@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UsersRequest;
 use App\Role_user;
 use App\User;
+use App\Shipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -170,5 +171,10 @@ class UserController extends Controller {
 		return User::whereIn('id', $users_id)->get();
 		// return $users_id;
 		// return User::where()->get();
+	}
+
+	public function getUserPro(Request $request, $id)
+	{
+		return Shipment::where('client_id', $id)->get();
 	}
 }

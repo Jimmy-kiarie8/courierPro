@@ -24,6 +24,10 @@
 
                     <v-card-title>
                         Users
+                        <download-excel :data="Allusers">
+                            Export
+                            <img src="/storage/csv.png" style="width: 30px; height: 30px; cursor: pointer;">
+                        </download-excel>
                         <v-btn slot="activator" color="primary" dark @click="openAdd">Add User</v-btn>
                         <v-tooltip right>
                             <v-btn icon slot="activator" class="mx-0" @click="getUsers">
@@ -40,31 +44,23 @@
                         <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
 
                         <template slot="items" slot-scope="props">
-
                             <td>{{ props.item.name }}</td>
-
                             <td class="text-xs-right">{{ props.item.email }}</td>
-
                             <td class="text-xs-right">{{ props.item.address }}</td>
-
                             <td class="text-xs-right">{{ props.item.phone }}</td>
-
                             <td class="text-xs-right">{{ props.item.city }}</td>
-
                             <td class="text-xs-right">{{ props.item.branch }}</td>
-
                             <td class="text-xs-right">{{ props.item.status }}</td>
-
                             <td class="justify-center layout px-0">
-
                                 <v-btn icon class="mx-0" @click="openEdit(props.item)">
                                     <v-icon small color="blue darken-2">edit</v-icon>
                                 </v-btn>
-
+                                <v-btn icon class="mx-0" @click="openShow(props.item)">
+                                    <v-icon small color="blue darken-2">visibility</v-icon>
+                                </v-btn>
                                 <v-btn icon class="mx-0" @click="deleteItem(props.item)">
                                     <v-icon small color="pink darken-2">delete</v-icon>
                                 </v-btn>
-
                             </td>
                         </template>
 
@@ -79,7 +75,7 @@
             </v-layout>
         </v-container>
         <div v-show="loader" style="text-align: center; width: 100%;">
-            <v-progress-circular :width="3" indeterminate color="red" style="margin: 1rem"></v-progress-circular>
+            <v-progress-circular :width="3" indeterminate color="green" style="margin: 1rem"></v-progress-circular>
         </div>
         <v-snackbar :timeout="timeout" :bottom="y === 'bottom'" :color="color" :left="x === 'left'" v-model="snackbar">
             {{ message }}
@@ -87,201 +83,136 @@
         </v-snackbar>
     </v-content>
     <AddUser @closeRequest="close" :openAddRequest="dispAdd" @alertRequest="showAlert" :AllBranches="AllBranches"></AddUser>
-    <ShowUser @closeRequest="close" :openShowRequest="dispShow"></ShowUser>
+    <!-- <ShowUser @closeRequest="close" :openShowRequest="dispShow"></ShowUser> -->
     <EditUser @closeRequest="close" :openEditRequest="dispEdit" @alertRequest="showAlert" :form="editedItem" :AllBranches="AllBranches"></EditUser>
+    <UserProfile @closeRequest="close" :openShowRequest="dispShow"  :user="editedItem" :AllShips="AllShips"></UserProfile>
 </div>
 </template>
 
 <script>
 let AddUser = require('./AddUser.vue')
-
-let ShowUser = require('./ShowUser.vue')
-
+// let ShowUser = require('./ShowUser.vue')
 let EditUser = require('./EditUser.vue')
+let UserProfile = require('./UserProfile.vue')
 
 export default {
 
     props: ['user', 'role'],
 
     components: {
-
         AddUser,
-
-        ShowUser,
-
-        EditUser
-
+        // ShowUser,
+        EditUser,
+        UserProfile
     },
 
     data() {
 
         return {
-
-            select: {
-
-                state: 'All',
-
-                abbr: 'all'
-
-            },
-
-            items: [{
-
+            AllShips: [],
+                select: {
                     state: 'All',
-
+                abbr: 'all'
+            },
+            items: [{
+                        state: 'All',
                     abbr: 'all'
-
                 },
-
                 {
-
-                    state: 'Admin',
-
+                        state: 'Admin',
                     abbr: 'Admin'
-
                 },
-
                 {
-
-                    state: 'company Admin',
-
+                        state: 'company Admin',
                     abbr: 'companyAdmin'
-
                 },
-
                 {
-
-                    state: 'Customers',
-
+                        state: 'Customers',
                     abbr: 'Customer'
-
                 },
-
                 {
-
-                    state: 'Drivers',
-
+                        state: 'Drivers',
                     abbr: 'Driver'
-
                 },
-
             ],
-
             headers: [{
-                    text: "Name",
-
+                        text: "Name",
                     value: "name"
                 },
-
                 {
-                    text: "Email",
-
+                        text: "Email",
                     value: "email"
                 },
-
                 {
-                    text: "Address",
-
+                        text: "Address",
                     value: "address"
                 },
-
                 {
-                    text: "Phone Number",
-
+                        text: "Phone Number",
                     value: "phone"
                 },
-
                 {
-                    text: "City",
-
+                        text: "City",
                     value: "city"
                 },
-
                 {
-                    text: "Branch",
-
+                        text: "Branch",
                     value: "branch"
                 },
-
                 {
-                    text: "Status",
-
+                        text: "Status",
                     value: "status"
                 },
-
                 {
-                    text: 'Actions',
-
+                        text: 'Actions',
                     value: 'name',
-
                     sortable: false
                 }
             ],
-
             AllBranches: {},
-
             search: '',
-
             loader: false,
-
             a1: null,
-
             dispAdd: false,
-
             dispShow: false,
-
             dispEdit: false,
-
             snackbar: false,
-
             loading: false,
-
             timeout: 5000,
-
             color: 'black',
-
             message: 'Success',
-
             y: 'bottom',
-
             x: 'left',
-
             Allusers: [],
-
             temp: '',
-
             editedItem: {},
-
             select: {
-                state: 'All',
+                    state: 'All',
                 abbr: 'all'
             },
             items: [{
-                    state: 'All',
+                        state: 'All',
                     abbr: 'all'
                 },
                 {
-                    state: 'Admin',
+                        state: 'Admin',
                     abbr: '1'
                 },
                 {
-                    state: 'Branch Admin',
+                        state: 'Branch Admin',
                     abbr: '2'
                 },
                 {
-                    state: 'Customers',
+                        state: 'Customers',
                     abbr: '3'
                 },
                 {
-                    state: 'Drivers',
+                        state: 'Drivers',
                     abbr: '4'
                 },
             ],
-
         }
-
     },
-
     watch: {
 
         search() {
@@ -306,15 +237,15 @@ export default {
 
     methods: {
 
-        openShow(key) {
+        // openShow(key) {
 
-            // this.$children[4].list = this.company[key]
+        //     // this.$children[4].list = this.company[key]
 
-            this.$children[2].list = this.Allusers[key]
+        //     this.$children[2].list = this.Allusers[key]
 
-            this.dispShow = true
+        //     this.dispShow = true
 
-        },
+        // },
 
         openAdd() {
 
@@ -332,6 +263,23 @@ export default {
             // this.$children[3].form = this.Allusers[key]
 
             this.dispEdit = true
+
+        },
+
+        openShow(item) {
+            this.editedIndex = this.Allusers.indexOf(item)
+            this.editedItem = Object.assign({}, item)
+            axios.post(`getUserPro/${this.editedItem.id}`)
+            .then((response) => {
+                this.loader = false
+                this.AllShips = response.data
+            })
+            .catch((error) => {
+                this.loader = false
+                this.errors = error.response.data.errors
+            })
+
+            this.dispShow = true
 
         },
 
@@ -400,7 +348,7 @@ export default {
 
         close() {
 
-            this.dispAdd = this.dispShow = this.dispEdit = false
+            this.dispAdd = this.dispShow = this.dispEdit = this.dispShow = false
 
         },
 

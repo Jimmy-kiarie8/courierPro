@@ -26,6 +26,7 @@ class CreateShipmentsTable extends Migration {
 			$table->string('client_region')->nullable();
 			$table->string('client_city')->nullable();
 			$table->integer('client_phone')->nullable();
+			$table->integer('client_id')->nullable();
 			$table->string('assign_staff')->nullable();
 			$table->string('airway_bill_no')->nullable();
 			$table->integer('bar_code')->nullable();
@@ -38,6 +39,8 @@ class CreateShipmentsTable extends Migration {
 			$table->string('payment')->nullable();
 			$table->string('shipment_type')->nullable();
 			$table->string('insuarance_status')->nullable();
+			$table->string('from')->nullable();
+			$table->string('to')->nullable();
 			$table->integer('total_freight')->nullable();
 			$table->date('booking_date')->nullable();
 			$table->date('derivery_date')->nullable();

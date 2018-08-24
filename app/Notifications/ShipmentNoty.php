@@ -11,15 +11,19 @@ class ShipmentNoty extends Notification
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
+
+	// public $thread;
+	public $shipment;
+
+	/**
+	 * Create a new notification instance.
+	 *
+	 * @return void
+	 */
+	public function __construct($shipment) {
+		// $this->thread = $thread;
+		$this->shipment = $shipment;
+	}
 
     /**
      * Get the notification's delivery channels.
@@ -27,24 +31,23 @@ class ShipmentNoty extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function via($notifiable)
-    {
-        return ['mail'];
-    }
+    public function via($notifiable) {
+		return ['database'];
+	}
 
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-    public function toMail($notifiable)
-    {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
-    }
+	/**
+	 * Get the mail representation of the notification.
+	 *
+	 * @param  mixed  $notifiable
+	 * @return \Illuminate\Notifications\Messages\MailMessage
+	 */
+	public function toDatabase($notifiable) {
+		return [
+			'shipment' => $this->shipment,
+			// 'user' => $notifiable,
+		];
+	}
+
 
     /**
      * Get the array representation of the notification.

@@ -13,91 +13,83 @@
 
             <v-layout justify-center align-center v-show="!loader">
 
-                <div class="row">
-
-                    <div class="col-md-12">
-
-                        <!-- {{form.start_date}} and {{form.end_date}} -->
-
+                <v-layout row wrap>
+                    <v-flex sm12>
                         <v-btn @click="invoiceAdd" flat color="primary">Add Invoice</v-btn>
 
-                        <!-- <v-flex xs12 sm4> -->
+                        <v-layout wrap>
+                            <v-flex sm12>
+                                <v-card style="background: rgba(5, 117, 230, 0.16);">
+                                    <v-layout wrap>
+                                        <v-flex xs4 sm2 offset-sm1>
+                                            <v-text-field v-model="form.start_date" color="blue darken-2" type="date" required></v-text-field>
+                                        </v-flex>
 
-                        <div class="row">
+                                        <v-flex xs4 sm2 offset-sm1>
+                                            <v-text-field v-model="form.end_date" color="blue darken-2" type="date" required></v-text-field>
+                                        </v-flex>
 
-                            <div class="col-md-4">
+                                        <v-flex xs4 sm3 offset-sm1>
+                                            <v-select :items="AllClients" v-model="select" :hint="`${select.name}`" label="Select" single-line item-text="name" item-value="id" return-object persistent-hint></v-select>
+                                        </v-flex>
+                                        <!-- <v-spacer></v-spacer> -->
+                                        <v-flex xs2 sm2>
+                                            <v-btn raised color="info" @click="sort">Filter</v-btn>
+                                        </v-flex>
+                                    </v-layout>
+                                </v-card>
+                            </v-flex>
+                        </v-layout>
+                    </v-flex>
+                    <v-flex sm12>
 
-                                <v-text-field v-model="form.start_date" color="blue darken-2" type="date" required></v-text-field>
-
-                            </div>
-
-                            <!-- </v-flex> -->
-
-                            <!-- <v-flex xs12 sm4 offset-sm1> -->
-
-                            <div class="col-md-4">
-
-                                <v-text-field v-model="form.end_date" color="blue darken-2" type="date" required></v-text-field>
-
-                            </div>
-
-                            <!-- </v-flex> -->
-
-                            <!-- <v-flex sm3> -->
-
-                            <div class="col-md-4">
-
-                                <v-btn color="primary" flat @click="sort">Sort</v-btn>
-
-                            </div>
-
-                        </div>
-
-                        <!-- </v-flex> -->
-                    </div>
-                    <v-card>
-                        <v-card-title>
-                            Nutrition
-                            <v-spacer></v-spacer>
-                            <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
-                        </v-card-title>
-                        <v-data-table :headers="headers" :items="invoices" class="elevation-1" :search="search" :loading="loading">
-							<v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
-                            <template slot="items" slot-scope="props">
-                                <td>{{ props.item.invoice_no }}</td>
-                                <td class="text-xs-right">{{ props.item.client }}</td>
-                                <td class="text-xs-right">{{ props.item.invoice_date }}</td>
-                                <td class="text-xs-right">{{ props.item.due_date }}</td>
-                                <td class="text-xs-right">{{ props.item.grand_total }}</td>
-                                <td class="justify-center layout px-0">
-                                    <v-tooltip bottom>
-                                        <v-btn slot="activator" icon class="mx-0" @click="invoiceEdit(props.item)">
-                                            <v-icon small color="blue darken-2">edit</v-icon>
-                                        </v-btn>
-                                        <span>Edit</span>
-                                    </v-tooltip>
-                                    <v-tooltip top>
-                                        <v-btn slot="activator" icon class="mx-0" @click="invoiceShow(props.item)">
-                                            <v-icon small color="blue darken-2">visibility</v-icon>
-                                        </v-btn>
-                                        <span>View</span>
-                                    </v-tooltip>
-                                    <v-tooltip right>
-                                        <v-btn slot="activator" icon class="mx-0" @click="invoiceMail(props.item)">
-                                            <v-icon small color="blue darken-2">mail</v-icon>
-                                        </v-btn>
-                                        <span>Send email</span>
-                                    </v-tooltip>
-                                </td>
-                            </template>
-                            <v-alert slot="no-results" :value="true" color="error" icon="warning">
-                                Your search for "{{ search }}" found no results.
-                            </v-alert>
-                        </v-data-table>
-                    </v-card>
+                        <v-card>
+                            <v-card-title>
+                                Invoices
+                                <download-excel :data="invoices">
+                                    Export
+                                    <img src="/storage/csv.png" style="width: 30px; height: 30px; cursor: pointer;">
+                                </download-excel>
+                                <v-spacer></v-spacer>
+                                <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+                            </v-card-title>
+                            <v-data-table :headers="headers" :items="invoices" class="elevation-1" :search="search" :loading="loading">
+                                <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+                                <template slot="items" slot-scope="props">
+                                    <td>{{ props.item.invoice_no }}</td>
+                                    <td class="text-xs-right">{{ props.item.client }}</td>
+                                    <td class="text-xs-right">{{ props.item.invoice_date }}</td>
+                                    <td class="text-xs-right">{{ props.item.due_date }}</td>
+                                    <td class="text-xs-right">{{ props.item.grand_total }}</td>
+                                    <td class="justify-center layout px-0">
+                                        <v-tooltip bottom>
+                                            <v-btn slot="activator" icon class="mx-0" @click="invoiceEdit(props.item)">
+                                                <v-icon small color="blue darken-2">edit</v-icon>
+                                            </v-btn>
+                                            <span>Edit</span>
+                                        </v-tooltip>
+                                        <v-tooltip top>
+                                            <v-btn slot="activator" icon class="mx-0" @click="invoiceShow(props.item)">
+                                                <v-icon small color="blue darken-2">visibility</v-icon>
+                                            </v-btn>
+                                            <span>View</span>
+                                        </v-tooltip>
+                                        <v-tooltip right>
+                                            <v-btn slot="activator" icon class="mx-0" @click="invoiceMail(props.item)">
+                                                <v-icon small color="blue darken-2">mail</v-icon>
+                                            </v-btn>
+                                            <span>Send email</span>
+                                        </v-tooltip>
+                                    </td>
+                                </template>
+                                <v-alert slot="no-results" :value="true" color="error" icon="warning">
+                                    Your search for "{{ search }}" found no results.
+                                </v-alert>
+                            </v-data-table>
+                        </v-card>
+                    </v-flex>
                     <!-- <v-flex sm12> -->
-
-                </div>
+                </v-layout>
 
             </v-layout>
 
@@ -115,9 +107,9 @@
 
     </v-content>
 
-    <AddInvoice @closeRequest="close" :openAddRequest="dispAdd" @alertRequest="showAlert" :buyers="AllBuyers"></AddInvoice>
+    <AddInvoice @closeRequest="close" :openAddRequest="dispAdd" @alertRequest="showAlert" :buyers="AllClients"></AddInvoice>
 
-    <EditInvoice @closeRequest="close" :openAddRequest="dispEdit" @alertRequest="showAlert" :buyers="AllBuyers" :invoiceData="editinvoice"></EditInvoice>
+    <EditInvoice @closeRequest="close" :openAddRequest="dispEdit" @alertRequest="showAlert" :buyers="AllClients" :invoiceData="editinvoice"></EditInvoice>
 
     <ShowInvoice @closeRequest="close" :openAddRequest="dispShow" @alertRequest="showAlert" :invoice="editinvoice"></ShowInvoice>
 
@@ -152,41 +144,31 @@ export default {
     data() {
 
         return {
-
+            select: {
+                name: 'All',
+                id: 'all'
+            },
             dispAdd: false,
-
             dispEdit: false,
-
             dispShow: false,
-
             dispMail: false,
-
             loader: false,
-
             snackbar: false,
-
             timeout: 5000,
-
             color: '',
-
             message: '',
-
             Allusers: [],
-
             invoices: [],
-
-            AllBuyers: {},
-
+            AllClients: [],
             editinvoice: {},
-
             form: {
 
                 start_date: '',
 
                 end_date: ''
 
-			},
-			loading: false,
+            },
+            loading: false,
             search: '',
             headers: [{
                     text: 'Invoice Number',
@@ -227,7 +209,10 @@ export default {
 
             this.loading = true
 
-            axios.post('getInvoiceSort', this.form)
+            axios.post('getInvoiceSort', {
+                    form: this.form,
+                    select: this.select
+                })
 
                 .then((response) => {
 
@@ -405,7 +390,7 @@ export default {
 
             .then((response) => {
 
-                this.AllBuyers = response.data
+                this.AllClients = response.data
 
             })
 

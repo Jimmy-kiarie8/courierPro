@@ -7,20 +7,18 @@ use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class Slack extends Notification {
+class NotyExcel extends Notification {
 	use Queueable;
 
-	public $thread;
-	public $authUser;
+	public $message;
 
 	/**
 	 * Create a new notification instance.
 	 *
 	 * @return void
 	 */
-	public function __construct($thread, $authUser) {
-		$this->thread = $thread;
-		$this->authUser = $authUser;
+	public function __construct($message) {
+		$this->message = $message;
 	}
 
 	/**
@@ -41,9 +39,7 @@ class Slack extends Notification {
 	 */
 	public function toDatabase($notifiable) {
 		return [
-			// 'repliedTime'=>Carbon::now()
-			'thread' => $this->thread,
-			'authUser' => $this->authUser,
+			'shipment' => $this->message,
 			'user' => $notifiable,
 		];
 	}
@@ -57,9 +53,7 @@ class Slack extends Notification {
 	public function toBroadcast($notifiable)
 	{
 	    return new BroadcastMessage([
-	        'thread' => $this->thread,
-			'authUser' => $this->authUser,
-			'user' => $notifiable,
+			'message' => $this->message,
 	    ]);
 	}
 

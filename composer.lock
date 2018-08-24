@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "810d826b5580aef50bb495a639c53445",
+    "content-hash": "0c7a41cb7df9840ff177616616cc6024",
     "packages": [
         {
             "name": "agoalofalife/reports",

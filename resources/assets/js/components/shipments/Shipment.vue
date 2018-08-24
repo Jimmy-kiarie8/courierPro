@@ -39,8 +39,12 @@
                     </v-card>
 
                     <v-card-title>
-
+                        <download-excel :data="AllShipments">
+                            Export
+                            <img src="/storage/csv.png" style="width: 30px; height: 30px; cursor: pointer;">
+                        </download-excel>
                         <v-btn color="primary" flat @click="openShipment">Add Shipment</v-btn>
+                        <v-btn color="primary" flat @click="ShipmentCsv">Upload Excel</v-btn>
 
                         <v-tooltip right>
                             <v-btn icon slot="activator" class="mx-0" @click="getShipments">
@@ -168,6 +172,7 @@
     <AssignDriver :AllDrivers="AllDrivers" :OpenAssignDriver="AssignDriverModel" @alertRequest="showalert" @closeRequest="close" :updateitedItem="editedItem" :selectedItems="selected"></AssignDriver>
     <AssignBranch :AllBranches="AllBranches" :OpenAssignBranch="AssignBranchModel" @alertRequest="showalert" @closeRequest="close" :updateitedItem="editedItem" :selectedItems="selected"></AssignBranch>
     <TrackShipment @refreshRequest="getShipments" :shipments="shipment" :OpenTrackBranch="trackModel" @alertRequest="showalert" @closeRequest="close" :updateitedItem="editedItem" :selectedItems="selected"></TrackShipment>
+    <myCsvFile :OpenCsv="csvModel" @closeRequest="close"></myCsvFile>
     <v-snackbar :timeout="timeout" bottom="bottom" :color="color" left="left" v-model="snackbar">
         {{ message }}
         <v-icon dark right>check_circle</v-icon>
@@ -177,270 +182,169 @@
 
 <script>
 import VueBarcode from "vue-barcode";
-
 let AddShipment = require("./AddShipment");
-
 let EditShipment = require("./EditShipment");
-
 let ShowShipment = require("./ShowShipments");
-
 let UpdateShipment = require('./UpdateShipment')
-
 let UpdateShipmentStatus = require('./UpdateShipmentStatus')
-
 let AssignDriver = require('./AssignDriver')
-
 let AssignBranch = require('./AssignBranch')
-
 let TrackShipment = require('./TrackShipment')
+let myCsvFile = require('../csv/CsvFile')
 
 export default {
     props: ["user", "role"],
 
     components: {
         AddShipment,
-
         ShowShipment,
-
         EditShipment,
-
         barcode: VueBarcode,
-
         UpdateShipmentStatus,
-
         UpdateShipment,
-
         AssignDriver,
-
         AssignBranch,
-
-        TrackShipment
+        TrackShipment,
+        myCsvFile
     },
 
     data() {
         return {
+            csvModel: false,
             trackModel: false,
-
             AllBranches: [],
-
             AllDrivers: {},
-
             markers: {
                 position: {}
             },
-
             select: {
-
                 branch_name: 'All',
-
                 id: 'all'
-
             },
-
             selectItem: {
                 state: 'All',
             },
-
             statuses: [{
                     state: 'Dispatched',
                 },
-
                 {
                     state: 'Derivered',
                 },
-
                 {
                     state: 'Not Peaking',
                 },
-
                 {
                     state: 'cancled',
                 },
-
                 {
                     state: 'Awaiting Confirmation',
                 },
-
                 {
                     state: 'Schedueled',
                 },
             ],
-
             items: [{
-
                     state: 'All',
-
                     abbr: 'all'
-
                 },
-
                 {
-
                     state: 'Admin',
-
                     abbr: 'Admin'
-
                 },
-
                 {
-
                     state: 'company Admin',
-
                     abbr: 'companyAdmin'
-
                 },
-
                 {
-
                     state: 'Customers',
-
                     abbr: 'Customer'
-
                 },
-
                 {
-
                     state: 'Drivers',
-
                     abbr: 'Driver'
-
                 },
-
             ],
-
             snackbar: false,
-
             timeout: 5000,
-
             message: "Success",
-
             color: "black",
-
             loader: false,
-
             updateModal: false,
-
             AssignBranchModel: false,
-
             UpdateShipmentModel: false,
-
             showdialog1: false,
-
             AllShipments: [],
-
             search: "",
-
             temp: "",
-
             dialog: false,
-
             loading: false,
-
             dialog1: false,
-
             pdialog2: false,
-
             AssignDriverModel: false,
-
             updateitedItem: {},
-
             AllProducts: {},
-
             newProducts: {},
-
             coordinatesArr: [],
-
             showItem: {},
-
             editedItem: {},
-
             form: {
                 start_date: '',
                 end_date: '',
             },
-
             headers: [{
                     text: "Airwaybill",
-
                     value: "airway_bill_no"
                 },
-
                 {
                     text: "Barcode",
-
                     value: "bar_code"
                 },
-
                 {
                     text: "Client",
-
                     value: "client_name"
                 },
-
                 {
                     text: "From",
-
                     value: "sender_name"
                 },
-
                 {
                     text: "Client Phone",
-
                     value: "client_phone"
                 },
-
                 {
                     text: "Client Email",
-
                     value: "client_email"
                 },
-
                 {
                     text: "Client Address",
-
                     value: "client_address"
                 },
-
                 {
                     text: "Sender City",
-
                     value: "sender_city"
                 },
-
                 {
                     text: "Client City",
-
                     value: "client_city"
                 },
-
                 {
                     text: "Booked on",
-
                     value: "booking_date"
                 },
-
                 {
                     text: "Status",
-
                     value: "status"
                 },
-
                 {
                     text: 'Actions',
-
                     value: 'name',
-
                     sortable: false
                 }
             ],
             selected: [],
-
             selectStatus: [],
-
             direction: "left",
-
             Allcustomers: {},
-
             shipment: {}
         };
     },
@@ -573,6 +477,10 @@ export default {
             this.trackModel = true
         },
 
+        ShipmentCsv() {
+            this.csvModel = true
+        },
+
         deleteItem(item) {
             const index = this.AllShipments.indexOf(item);
 
@@ -628,7 +536,7 @@ export default {
 
         close() {
             this.dialog1 = this.dialog = this.pdialog2 = this.updateModal = this.showdialog1 =
-                this.UpdateShipmentModel = this.AssignDriverModel = this.AssignBranchModel = this.trackModel = false;
+                this.UpdateShipmentModel = this.AssignDriverModel = this.AssignBranchModel = this.trackModel = this.csvModel = false;
         },
 
         getTotal() {

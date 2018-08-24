@@ -19,7 +19,7 @@
 
                         <v-card>
 
-                            <select class="custom-select custom-select-md col-md-12" v-model="updateitedItem.status">
+                            <select class="custom-select custom-select-md col-md-12" v-model="form.status">
   
                                 <option value="Awaiting Approval">Awaiting Approval</option>
                 
@@ -114,8 +114,6 @@
                 </v-card-actions>
 
             </v-container>
-
-            <v-divider></v-divider>
 
         </v-card>
     </v-dialog>

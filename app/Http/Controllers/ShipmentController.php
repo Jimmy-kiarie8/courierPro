@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ShipmentRequest;
 use App\Shipment;
+use App\User;
 use Illuminate\Support\Carbon;
 use App\ShipmentStatus;
 use App\Product;
@@ -12,13 +13,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Notifications\ShipmentNoty;
+use App\Notifications\NotyExcel;
+use Notification;
 
 class ShipmentController extends Controller {
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
 	public function getShipments() {
 		$roles = Auth::user()->roles;
 		foreach ($roles as $role) {
@@ -28,7 +27,8 @@ class ShipmentController extends Controller {
 		if ($role_name == 'Admin') {
 			return Shipment::all();
 		}
-		$results = Shipment::where('branch_id', Auth::user()->branch_id)->get();
+		$results = Shipment::orderby('id', 'asc')->get();
+		// $results = Shipment::where('branch_id', Auth::user()->branch_id)->get();
 		return json_decode(json_encode($results), true);
 	}
 
@@ -112,8 +112,11 @@ class ShipmentController extends Controller {
 	 */
 	public function import(Request $request) {
 		// return $request->all();
+		$message = 'New shipments have been added';
+		Notification::send(Auth::user(), new NotyExcel($message));
+		return redirect('courier#/Shipments');
+
 		if ($request->file('shipment')) {
-			// var_dump('woooooooo');
 			$path = $request->file('shipment')->getRealPath();
 			$data = Excel::load($path, function ($reader) {
 
@@ -157,9 +160,12 @@ class ShipmentController extends Controller {
 				if (!empty($dataArray)) {
 					Shipment::insert($dataArray);
 				}
+				// Notification::send(Auth::user(), new ShipmentNoty($shipment));
 				return redirect('courier#/Shipments');
 				
 			}
+		}else{
+			var_dump('noop');
 		}
 	}
 
@@ -183,32 +189,33 @@ class ShipmentController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(Request $request) {
-		// return $request->products;
-		$this->
-		Validate($request, [
-			'client_name' =>'required',
-			'client_phone' =>'required|numeric',
-			'client_email' =>'required|email',
-			'client_address' =>'required',
-			'client_city' =>'required',
-			'assign_staff' =>'required',
-			'airway_bill_no' =>'required',
-			'shipment_type' =>'required',
-			'payment' =>'required',
-			'insuarance_status' =>'required',
-			'booking_date' =>'required|date',
-			'derivery_date' =>'required|date',
-			'bar_code' =>'required',
-			'derivery_time' =>'required',
-			// 'sender_name' =>'required',
-			// 'sender_phone' =>'required',
-			// 'sender_address' =>'required',
-			// 'sender_city' =>'required',
-			// 'total_freight' =>'required|numeric',
+		// return $request->all();
+		$this->Validate($request, [
+			// 'form.client_name' =>'required',
+			// 'form.client_phone' =>'required|numeric',
+			// 'form.client_email' =>'required|email',
+			// 'form.client_address' =>'required',
+			// 'form.client_city' =>'required',
+			'form.assign_staff' =>'required',
+			'form.shipment_type' =>'required',
+			'form.payment' =>'required',
+			'form.insuarance_status' =>'required',
+			'form.booking_date' =>'required|date',
+			'form.derivery_date' =>'required|date',
+			'form.bar_code' =>'required',
+			'form.derivery_time' =>'required',
+			'form.from_city' =>'required',
+			'form.to_city' =>'required',
+			// 'form.sender_name' =>'required',
+			// 'form.sender_phone' =>'required',
+			// 'form.sender_address' =>'required',
+			// 'form.sender_city' =>'required',
+			// 'form.airway_bill_no' =>'required',
+			// 'form.total_freight' =>'required|numeric',
 		]);
 		
 
-		$products = collect($request->products)->transform(function ($product) {
+		$products = collect($request->form['products'])->transform(function ($product) {
 			$product['total'] = $product['quantity'] * $product['price'];
 			$product['user_id'] = Auth::id();
 			return new Product($product);
@@ -223,24 +230,28 @@ class ShipmentController extends Controller {
 		}
 		$shipment = new Shipment;
 		$shipment->sub_total = $products->sum('total');
-		$shipment->client_name = $request->client_name;
-		$shipment->client_phone = $request->client_phone;
-		$shipment->client_email = $request->client_email;
-		$shipment->client_address = $request->client_address;
-		$shipment->client_city = $request->client_city;
-		$shipment->assign_staff = $request->assign_staff;
-		$shipment->airway_bill_no = $request->airway_bill_no;
-		$shipment->shipment_type = $request->shipment_type;
-		$shipment->payment = $request->payment;
-		$shipment->total_freight = $request->total_freight;
-		// $shipment->total = $request->total;
-		$shipment->insuarance_status = $request->insuarance_status;
-		$shipment->booking_date = $request->booking_date;
-		$shipment->derivery_date = $request->derivery_date;
-		$shipment->derivery_time = $request->derivery_time;
-		$shipment->bar_code = $request->bar_code;
-		$shipment->branch_id = $request->branch_id;
-		// return $request->customer_id;
+		$shipment->client_name = $request->form['client_name'];
+		$shipment->client_phone = $request->form['client_phone'];
+		$shipment->client_email = $request->form['client_email'];
+		$shipment->client_address = $request->form['client_address'];
+		$shipment->client_city = $request->form['client_city'];
+		$shipment->assign_staff = $request->form['assign_staff'];
+		$shipment->airway_bill_no = $request->form['bar_code'];
+		$shipment->shipment_type = $request->form['shipment_type'];
+		$shipment->payment = $request->form['payment'];
+		$shipment->total_freight = $request->form['total_freight'];
+		// $shipment->total = $request->form['total'];
+		$shipment->insuarance_status = $request->form['insuarance_status'];
+		$shipment->booking_date = $request->form['booking_date'];
+		$shipment->derivery_date = $request->form['derivery_date'];
+		$shipment->derivery_time = $request->form['derivery_time'];
+		$shipment->bar_code = $request->form['bar_code'];
+		$shipment->to_city = $request->form['to_city'];
+		$shipment->from_city = $request->form['from_city'];
+		$shipment->branch_id = $request->selectB['id'];
+		$shipment->driver = $request->selectD['id'];
+		$shipment->client_id = $request->selectC['id'];
+		// return $request->form['customer_id'];
 		$shipment->sender_name = Auth::user()->name;
 		$shipment->sender_email = Auth::user()->email;
 		$shipment->sender_phone = Auth::user()->phone;
@@ -249,10 +260,12 @@ class ShipmentController extends Controller {
 		$shipment->user_id = Auth::id();
 		$shipment->shipment_id = random_int(1000000, 9999999);
 		// $shipment->branch_id = Auth::user()->branch_id;
-		
+		$users = $this->getAdmin();
 		if ($shipment->save()) {
 			$shipment->products()->saveMany($products);
 		}
+		Notification::send($users, new ShipmentNoty($shipment));
+		// $users->notify(new ShipmentNoty($shipment));
 		return $shipment;
 	}
 
@@ -296,13 +309,23 @@ class ShipmentController extends Controller {
 		Shipment::find($shipment->id)->delete();
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \App\Shipment  $shipment
-	 * @return \Illuminate\Http\Response
-	 */
+
+	public function getAdmin()
+	{
+		$usersRole = User::with('roles')->get();
+		$userArr = [];
+		foreach ($usersRole as $user) {
+				// var_dump($user->roles); die;
+			foreach ($user->roles as $role) {
+				if ($role->name == 'Admin') {
+					$userArr[] = $role->pivot->user_id;		
+				}
+			}
+		}
+		$users = $userArr;
+		return $admin = User::whereIn('id', $userArr)->get();
+	}
+	
 	public function updateStatus(Request $request, Shipment $shipment, $id) {
 		// return $request->all();
 		$shipment = Shipment::find($request->id);
@@ -324,7 +347,7 @@ class ShipmentController extends Controller {
 
 	public function UpdateShipment(Request $request, Shipment $shipment)
 	{
-		// return $request->selected;
+		// return form['status']
 		$id = [];
 		foreach ($request->selected as $selectedItems ) {
 			$id[] = $selectedItems['id'];

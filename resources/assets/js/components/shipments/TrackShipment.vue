@@ -12,7 +12,7 @@
                     <span>Refresh</span>
                 </v-tooltip>
             </v-toolbar>
-            <v-card-text>
+            <v-card-text id="printMe">
                 <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
                 <v-layout wrap>
                     <v-flex xs12 sm6>
@@ -115,6 +115,8 @@
             </v-card-text>
             <v-card-actions>
                 <v-btn color="blue darken-1" flat @click="close">Close</v-btn>
+                <v-spacer></v-spacer>
+                <v-btn  v-print="'#printMe'" flat color="primary">Print</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>

@@ -53,7 +53,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::resource('roles', 'RoleController');
 	Route::resource('shipment', 'ShipmentController');
 	Route::resource('product', 'ProductController');
-	Route::resource('reports', 'ReportController');
+	Route::resource('shipreports', 'ReportController');
 	Route::resource('container', 'ContainerController');
 	Route::resource('branches', 'BranchController');
 	Route::resource('companies', 'CompanyController');
@@ -88,6 +88,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('getLogedinUsers', 'UserController@getLogedinUsers')->name('getLogedinUsers');
 	Route::post('profile/{id}', 'UserController@profile')->name('profile');
 	Route::post('getSorted', 'UserController@getSorted')->name('getSorted');
+	Route::post('getUserPro/{id}', 'UserController@getUserPro')->name('getUserPro');
 
 
 	Route::get('getUsersRole', 'RoleController@getUsersRole')->name('getUsersRole');
@@ -104,7 +105,6 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::post('getLogoOnly', 'CompanyController@getLogoOnly')->name('getLogoOnly');
 
 	// Reports
-
 	Route::post('shipmentExpo', 'ReportController@shipmentExpo')->name('shipmentExpo');
 	Route::post('userExpo', 'ReportController@userExpo')->name('userExpo');
 	Route::post('deriverdExpo', 'ReportController@deriverdExpo')->name('deriverdExpo');
@@ -116,14 +116,15 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::post('bookingExpo', 'ReportController@bookingExpo')->name('bookingExpo');
 	Route::post('approvedExpo', 'ReportController@approvedExpo')->name('approvedExpo');
 	Route::post('dispatchedExpo', 'ReportController@dispatchedExpo')->name('dispatchedExpo');
-	Route::post('userDateExpo', 'ReportController@userDateExpo')->name('userDateExpo');
+	Route::get('userDateExpo', 'ReportController@userDateExpo')->name('userDateExpo');
+	Route::post('DriverReport', 'ReportController@DriverReport')->name('DriverReport');
 
-
+	
 	// Dashboard
-	Route::post('delayedShipment', 'ShipmentController@delayedShipment')->name('delayedShipment');
-	Route::post('approvedShipment', 'ShipmentController@approvedShipment')->name('approvedShipment');
-	Route::post('waitingShipment', 'ShipmentController@waitingShipment')->name('waitingShipment');
-	Route::post('deriveredShipment', 'ShipmentController@deriveredShipment')->name('deriveredShipment');
+	Route::get('delayedShipment', 'ShipmentController@delayedShipment')->name('delayedShipment');
+	Route::get('approvedShipment', 'ShipmentController@approvedShipment')->name('approvedShipment');
+	Route::get('waitingShipment', 'ShipmentController@waitingShipment')->name('waitingShipment');
+	Route::get('deriveredShipment', 'ShipmentController@deriveredShipment')->name('deriveredShipment');
 	Route::get('scheduled', 'ShipmentController@scheduled')->name('scheduled');
 
 	// Chart
@@ -158,12 +159,15 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::post('/attachments/categories', 'HomeController@getCategories')->name('pull-categories');
 	Route::post('/categories', 'HomeController@storeCategories');
 
-
 	// Date test
 	Route::post('/carbon', 'RoleController@carbon')->name('carbon');
 
-
 	// Reports
-	Route::get('/displayReport', 'ReportController@displayReport')->name('displayReport');
+	Route::post('/displayReport', 'ReportController@displayReport')->name('displayReport');
+
+	// Notifications
+	Route::get('/notifications', 'NotificationController@notifications')->name('notifications');
+	Route::post('/Notyshpments/{id}', 'NotificationController@Notyshpments')->name('Notyshpments');
+	Route::post('/read', 'NotificationController@read')->name('read');
 	
 });

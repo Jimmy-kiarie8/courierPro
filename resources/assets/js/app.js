@@ -19,6 +19,7 @@ import '@fortawesome/fontawesome-free/css/all.css' // Ensure you are using css-l
 import 'vuetify/dist/vuetify.min.css'
 import VueCharts from 'vue-chartjs'
 import { Bar, Line } from 'vue-chartjs'
+import JsonExcel from 'vue-json-excel'
 
 // vue.use(Vuetify, {
 //     iconfont: 'mdi'
@@ -42,11 +43,13 @@ Vue.use(VueRouter)
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 // axios.defaults.baseURL = 'http://courier.dev/api/getData';
+Vue.component('downloadExcel', JsonExcel)
 Vue.component('file-management', require('./components/FileManagement.vue'));
 Vue.component('attachment-list', require('./components/AttachmentList.vue'));
 let dashboard = require('./components/Dashboard.vue');
 
 let myHeader = require('./components/include/Header.vue');
+let HeadView = require('./components/include/HeadView.vue');
 let myUser = require('./components/users/User.vue');
 let myDrivers = require('./components/drivers/Driver.vue');
 let myShipment = require('./components/shipments/Shipment.vue');
@@ -61,8 +64,8 @@ let mysubsicriber = require('./components/emails/Subscribe.vue');
 let myInvice = require('./components/invoices/Invoice.vue');
 let myReceipt = require('./components/receipt/Receipt.vue');
 let myReports = require('./components/reports/Reports.vue');
-// let myCsv = require('./components/csv/Csv.vue');
-let myCsv = require('./components/csv/test.vue');
+// let myPdf = require('./components/csv/Csv.vue');
+let myPdf = require('./components/csv/test.vue');
 let mybranchShip = require('./components/branches/BranchShipments.vue');
 let myRoles = require('./components/users/roles/Roles.vue');
 let myscheduled = require('./components/shipments/Scheduled.vue');
@@ -82,7 +85,7 @@ const routes = [
 {path: '/invoices', component: myInvice },
 {path: '/receipts', component: myReceipt },
 {path: '/reports', component: myReports },
-{path: '/csv', component: myCsv },
+{path: '/csv', component: myPdf },
 {path: '/roles', component: myRoles },
 {path: '/branch/:id', component: mybranchShip },
 {path: '/scheduled', component: myscheduled },
@@ -98,7 +101,7 @@ const app = new Vue({
     components: {
     	myHeader, myUser, myDrivers, myShipment, myScanner, myContainer, myMap,
         myBranch, myProfile, myCompany, myCustomer, mysubsicriber, myInvice, myReceipt,
-        myReports, myCsv, mybranchShip, myRoles, myscheduled
+        myReports, myPdf, mybranchShip, myRoles, myscheduled, HeadView
     },
     data: {
     shipments: [],

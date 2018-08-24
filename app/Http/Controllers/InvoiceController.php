@@ -163,6 +163,29 @@ class InvoiceController extends Controller {
 	}
 
 	public function getInvoiceSort(Request $request) {
+		
+		if ($request->form['start_date'] == '' || $request->form['end_date'] == '') {
+			if ($request->select['id'] == 'all') {
+				return Invoice::all();	
+			}
+			else{
+				return Invoice::where('client', $request->select['name'])->get();
+			}
+		}else{
+			if ($request->select['id'] == 'all') {
+				if ($request->select['id'] == 'all') {
+					return Invoice::whereBetween('created_at', [$request->form['start_date'], $request->form['end_date']])->get();
+				}else{
+					
+					return Invoice::whereBetween('created_at', [$request->form['start_date'], $request->form['end_date']])->get();
+				}
+			}
+			else{
+					return Invoice::where('client', $request->select['name'])
+								->whereBetween('created_at', [$request->form['start_date'], $request->form['end_date']])
+								->get();
+			}
+		}
 		return Invoice::whereBetween('created_at', [$request->start_date, $request->end_date])->get();
 	}
 

@@ -45,6 +45,10 @@ class ReportMail extends Mailable
                     ->attachData($this->pdf, 'name.pdf', [
                         'mime' => 'application/pdf',
                     ])
+                    // ->attach('http://courier.dev/storage/book1.xlsx', [
+                    //     'as' => 'name.xlsx',
+                    //     'mime' => 'application/xlsx',
+                    // ])
                     ->subject( 'Schedule derivery' );
     }
 }

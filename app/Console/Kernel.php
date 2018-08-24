@@ -31,10 +31,10 @@ class Kernel extends ConsoleKernel
     {
         //insert name and signature of you command and define the time of excusion
         $schedule->command('notifications:ScheduledCommand')
-                 ->everyMinute();
+                 ->daily();
         $schedule->command('Mailreports:ReportMail')
-                ->everyMinute();
-        $schedule->command(ParseReportsCommand::class)->everyMinute();
+                ->twiceDaily(13, 15);
+        $schedule->command(ParseReportsCommand::class)->daily();
 
     }
 

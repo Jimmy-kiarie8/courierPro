@@ -203,6 +203,22 @@
 
                         </router-link>
 
+                        <router-link to="/reports" class="v-list__tile v-list__tile--link">
+
+                            <div class="v-list__tile__action"><i aria-hidden="true" class="icon material-icons">book</i></div>
+
+                            <div class="v-list__tile__content">
+
+                                <div class="v-list__tile__title">
+
+                                    Reports
+
+                                </div>
+
+                            </div>
+
+                        </router-link>
+
                         <v-expansion-panel popout>
                             <v-expansion-panel-content>
                                 <div slot="header">Account Setting</div>
@@ -242,23 +258,7 @@
                                 </v-card>
                             </v-expansion-panel-content>
                         </v-expansion-panel>
-
-                        <a href="http://courier.dev/reports" class="v-list__tile v-list__tile--link">
-
-                            <div class="v-list__tile__action"><i aria-hidden="true" class="icon material-icons">info</i></div>
-
-                            <div class="v-list__tile__content">
-
-                                <div class="v-list__tile__title">
-
-                                    Reports
-
-                                </div>
-
-                            </div>
-
-                        </a>
-
+                        
                     </v-card>
                 </template>
             </v-list>

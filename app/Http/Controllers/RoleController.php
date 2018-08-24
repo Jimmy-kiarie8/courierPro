@@ -8,12 +8,12 @@ use App\Role_user;
 use App\Role;
 use App\User;
 use App\Shipment;
-use DB;
 use Illuminate\Http\Request;
 use App\Mail\scheduleMail;
 use Illuminate\Support\Facades\Mail;
 use PdfReport;
 use ExcelReport;
+use App\Mail\ReportMail;
 
 class RoleController extends Controller {
 	
@@ -59,9 +59,12 @@ class RoleController extends Controller {
 
 	public function carbon(Request $request)
 	{
+
 		$all_shipment = Shipment::setEagerLoads([])->get();
+		$user = User::find(1);
+		// $user->notify(new ShipmentNoty($all_shipment));
+		// return;
 		$today = Carbon::now();
-		 $user = User::find(1);
 		// foreach ($all_shipment as $shipment) {
 		// 	$derivery_date = new Carbon($shipment->derivery_date);
 		// 	$date1 = Carbon::today();
@@ -109,7 +112,7 @@ class RoleController extends Controller {
 		// Do some querying..
 		$queryBuilder = Shipment::whereBetween('created_at', ['2018-08-01' ,$next_month])
 							->where('client_name', $mails['name'])
-							->orderBy($sortBy);
+							->orderBy($sortBy)->get();
 		$columns = [
 			'airway bill no',
 			'sender name',
@@ -124,7 +127,7 @@ class RoleController extends Controller {
 			'derivery date',
 		];
 		
-		$pdf = PdfReport::of($title, $meta, $queryBuilder, $columns)
+		$pdf = ExcelReport::of($title, $meta, $queryBuilder, $columns)
 						->editColumn('created at', [
 							'displayAs' => function($result) {
 								return $result->created_at->format('d M Y');
@@ -133,9 +136,11 @@ class RoleController extends Controller {
 						->setCss([
 							'.head-content' => 'border-width: 1px',
 						 ])
-						->limit(10)
-						->stream(); // or download('f
-						return $pdf;
+						->make('csv'); // or download('f
+						// $pdf = json_decode(json_encode($pdf_new), true);
+						// var_dump($pdf);die;
+			Mail::send(new ReportMail($user, $email));
+
 
 		}	
 	}

@@ -61,6 +61,10 @@
                 <!-- <v-btn @click="openAdd" color="primary">Add A Branch</v-btn> -->
                 <div v-show="!loader">
                     <v-card-title>
+                        <download-excel :data="AllBranches">
+                            Export
+                            <img src="/storage/csv.png" style="width: 30px; height: 30px; cursor: pointer;">
+                        </download-excel>
                         <v-btn color="primary" flat @click="openAdd">Add A Branch</v-btn>
                         Branchs
                         <v-spacer></v-spacer>
