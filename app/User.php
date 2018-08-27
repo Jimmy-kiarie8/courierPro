@@ -51,6 +51,11 @@ class User extends Authenticatable {
     public function sendVerificationEmail()
     {
         $this->notify(new verifyEmail($this));
-    }
+	}
+	
+	
+	public function documents() {
+		return $this->hasMany('App\Attachment', 'client_id');	
+	}
 
 }

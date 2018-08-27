@@ -174,6 +174,18 @@ Route::group(['middleware' => ['auth']], function () {
 
 	// Tasks
 	Route::get('/getTasks', 'TaskController@getTasks')->name('getTasks');
+
+	// Uploads
+	Route::get('/upload', 'HomeController@upload')->name('upload');
+	Route::get('/categories', 'HomeController@categories')->name('categories');
+	Route::get('/getDocs', 'HomeController@getDocs')->name('getDocs');
+	Route::get('/getClientsDocs', 'HomeController@getClientsDocs')->name('getClientsDocs');
+
+	Route::post('/assign/{id}', 'HomeController@assign')->name('assign');
+	Route::post('/getDocsSort', 'HomeController@getDocsSort')->name('getDocsSort');
 	
-	
+	// Route::get('scheduler', function (){
+	// 	\Illuminate\Support\Facades\Artisan::call('schedule:run');
+	//  });
+	 
 });

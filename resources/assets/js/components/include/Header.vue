@@ -266,7 +266,7 @@
         <v-toolbar dark app :color="color" :clipped-left="$vuetify.breakpoint.lgAndUp" fixed>
             <v-toolbar-title style="width: 600px" class="ml-0 pl-3">
                 <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-                {{ user.name }}
+                SpeedBall Courier
                 <img :src="user.profile" alt="" style="width: 60px; height: 60px; border-radius: 50%;">
             </v-toolbar-title>
             <v-spacer></v-spacer>

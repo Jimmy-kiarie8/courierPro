@@ -9,6 +9,7 @@ use Auth;
 use Exception;
 use App\AttachmentCategory;
 use App\Attachment;
+use App\User;
 
 class HomeController extends Controller
 {
@@ -235,5 +236,73 @@ class HomeController extends Controller
     {
         // return AttachmentCategory::where('id', $attachmentCategory->id)->delete();
         // return Nse::where('id', $nse->id)->delete();
+    }
+    
+    public function upload(Request $request)
+    {	
+    	return Props::get();
+
+    }
+
+    public function categories()
+    {
+        return $category = AttachmentCategory::all();
+    }
+
+    public function getDocs()
+    {
+        return Attachment::all();
+    }
+
+    public function getClientsDocs()
+    {
+        $users = User::with('roles')->get();
+		$userArr = [];
+		foreach ($users as $user) {
+			foreach ($user->roles as $role) {
+				if ($role->name == 'Customer') {
+					$userArr[] = $role->pivot->user_id;		
+				}
+			}
+		}
+		$customers = User::with('documents')->whereIn('id', $userArr)->get();
+		return $customers;
+    }
+
+    public function assign(Request $request, $id)
+    {
+        // return $request->all();
+        $attachment = Attachment::find($id);
+        $attachment->client_id = $id;
+        $attachment->save();
+        return $attachment;
+    }
+
+    public function getDocsSort(Request $request)
+    {
+        
+		if ($request->form['start_date'] == '' || $request->form['end_date'] == '') {
+			if ($request->select['id'] == 'all') {
+				return Attachment::all();	
+			}
+			else{
+				return Attachment::where('client_id', $request->select['id'])->get();
+			}
+		}else{
+			if ($request->select['id'] == 'all') {
+				if ($request->select['id'] == 'all') {
+					return Attachment::whereBetween('created_at', [$request->form['start_date'], $request->form['end_date']])->get();
+				}else{
+					
+					return Attachment::whereBetween('created_at', [$request->form['start_date'], $request->form['end_date']])->get();
+				}
+			}
+			else{
+					return Attachment::where('client_id', $request->select['id'])
+								->whereBetween('created_at', [$request->form['start_date'], $request->form['end_date']])
+								->get();
+			}
+		}
+		return Attachment::whereBetween('created_at', [$request->start_date, $request->end_date])->get();
     }
 }

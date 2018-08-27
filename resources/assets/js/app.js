@@ -44,8 +44,9 @@ Vue.use(VueRouter)
  */
 // axios.defaults.baseURL = 'http://courier.dev/api/getData';
 Vue.component('downloadExcel', JsonExcel)
-Vue.component('file-management', require('./components/FileManagement.vue'));
-Vue.component('attachment-list', require('./components/AttachmentList.vue'));
+Vue.component('file-management', require('./components/upload/FileManagement.vue'));
+Vue.component('attachment-list', require('./components/upload/AttachmentList.vue'));
+Vue.component('upload-list', require('./components/upload/Upload.vue'));
 let dashboard = require('./components/Dashboard.vue');
 
 let myHeader = require('./components/include/Header.vue');
@@ -69,6 +70,7 @@ let mybranchShip = require('./components/branches/BranchShipments.vue');
 let myRoles = require('./components/users/roles/Roles.vue');
 let myscheduled = require('./components/shipments/Scheduled.vue');
 let myTasks = require('./components/tasks/Task.vue');
+let myUploadFile = require('./components/upload/UploadFile.vue');
 
 const routes = [
 {path: '/', component: dashboard },
@@ -90,6 +92,9 @@ const routes = [
 {path: '/branch/:id', component: mybranchShip },
 {path: '/scheduled', component: myscheduled },
 {path: '/tasks', component: myTasks },
+{path: '/uploads', component: myUploadFile },
+
+
 ]
 const router = new VueRouter({
 // mode: 'history',
@@ -102,7 +107,7 @@ const app = new Vue({
     components: {
     	myHeader, myUser, myDrivers, myShipment, myScanner, myContainer, myMap,
         myBranch, myProfile, myCompany, myCustomer, mysubsicriber, myInvice, myReceipt,
-        myReports, myPdf, mybranchShip, myRoles, myscheduled, myTasks
+        myReports, myPdf, mybranchShip, myRoles, myscheduled, myTasks, myUploadFile
     },
     data: {
     shipments: [],

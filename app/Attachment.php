@@ -28,6 +28,11 @@ class Attachment extends Model
     	return $this->belongsTo('App\AttachmentCategory');
     }
 
+    public function user()
+    {
+    	return $this->belongsTo('App\User');
+    }
+
     /**
      * Format updated_at 
      *

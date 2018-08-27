@@ -10,6 +10,19 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    <script src="https://www.gstatic.com/firebasejs/5.4.1/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyD6ZwYtv9R4LJusjTLCVBtdbZn9nxj4xe0",
+        authDomain: "courier-55c5e.firebaseapp.com",
+        databaseURL: "https://courier-55c5e.firebaseio.com",
+        projectId: "courier-55c5e",
+        storageBucket: "",
+        messagingSenderId: "380640669657"
+      };
+      firebase.initializeApp(config);
+    </script>
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
     {{-- <script src="{{ asset('js/jquery.js') }}"></script> --}}
@@ -44,5 +57,6 @@
     </div>
 
 <script src="{{ asset('vuetify/js/vuetify.js') }}"></script>
+
 </body>
 </html>
